@@ -1,23 +1,22 @@
 package kp.bahmatov.insurance.service;
 
-import kp.bahmatov.insurance.domain.dto.user.CreateUserDto;
-import kp.bahmatov.insurance.domain.structure.InsuranceData;
+import kp.bahmatov.insurance.domain.dto.user.CreateUserInDto;
+import kp.bahmatov.insurance.domain.structure.insurance.content.Content;
+import kp.bahmatov.insurance.domain.structure.insurance.content.ContentType;
+import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserData;
 import kp.bahmatov.insurance.domain.structure.Role;
 import kp.bahmatov.insurance.domain.structure.User;
-import kp.bahmatov.insurance.exceptions.SendMailException;
+import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserDataStatus;
 import kp.bahmatov.insurance.exceptions.UserAlreadyExistsException;
 import kp.bahmatov.insurance.exceptions.UserNotFoundException;
 import kp.bahmatov.insurance.repo.InsuranceDataRepo;
 import kp.bahmatov.insurance.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailSendException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -33,6 +32,31 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
         this.mailSender = mailSender;
         this.insuranceDataRepo = insuranceDataRepo;
+        initAdminIfDbEmpty();
+    }
+
+    @Deprecated
+    private void initAdminIfDbEmpty() {
+        if (userRepo.count() == 0) {
+            User user = new User();
+            InsuranceUserData insurance = new InsuranceUserData(user);
+            insurance.setPassportId("1234");
+            insurance.setPhone("1234");
+            Content photo = new Content();
+            photo.setType(ContentType.IMAGE_PNG);
+            photo.setContent(new byte[0]);
+            insurance.setPhoto(photo);
+            insurance.setStatus(InsuranceUserDataStatus.CONFIRMED);
+            user.setInsurance(insurance);
+            user.setRoles(Set.of(Role.USER, Role.ADMIN));
+            user.setEmail("admin@admin.admin");
+            user.setFirstName("admin");
+            user.setSecondName("admin");
+            user.setPatronymic("admin");
+            user.setRegistrationDate(LocalDateTime.now());
+            user.setPassword(passwordEncoder.encode("admin"));
+            userRepo.save(user);
+        }
     }
 
     public User findByEmail(String email) {
@@ -43,7 +67,7 @@ public class UserService {
         return userRepo.findAll();
     }
 
-    public void addUser(CreateUserDto createUserDto) {
+    public void addUser(CreateUserInDto createUserDto) {
         if (userRepo.findByEmail(createUserDto.getEmail()).orElse(null) != null)
             throw new UserAlreadyExistsException("A user is already registered to this email");
 
@@ -54,10 +78,11 @@ public class UserService {
         user.setPatronymic(createUserDto.getPatronymic());
         user.setEmail(createUserDto.getEmail());
         user.setPassword(passwordEncoder.encode(createUserDto.getPassword()));
-        user.setActivationCode(UUID.randomUUID().toString());
+//        user.setActivationCode(UUID.randomUUID().toString()); fixme
+        user.setActivationCode(null);
         user.setRegistrationDate(LocalDateTime.now());
         user.setRoles(Set.of(Role.USER));
-        user.setInsurance(new InsuranceData(user));
+        user.setInsurance(new InsuranceUserData(user));
 
         sendActivateEmail(user);
 
@@ -67,18 +92,18 @@ public class UserService {
     private void sendActivateEmail(User user) {
         String message = String.format("""
                 Здравствуйте %s %s %s
-                Добро пожаловать в Insurance
-                Чтобы подтвердить почту перейдите по ссылке <a href="%s/registration/activate?code=%s"><u>клик</u></a>
+                Добро пожаловать в CarInsurance
+                Чтобы подтвердить почту перейдите по ссылке <a target="_blank" href="%s/registration/activate?code=%s"><u>клик</u></a>
                 """, user.getSecondName(), user.getFirstName(), user.getPatronymic(), host, user.getActivationCode());
 
-        try {
-            mailSender.send(user.getEmail(), "Активация аккаунта", message);
-        } catch (MailSendException e) {
-            throw new SendMailException();
-        } catch (MessagingException e) {
+//        try {
+//            mailSender.send(user.getEmail(), "Активация аккаунта", message);
+//        } catch (MailSendException e) {
+//            throw new SendMailException();
+//        } catch (MessagingException e) {
             //fixme add log
-            throw new RuntimeException(e);
-        }
+//            throw new RuntimeException(e);
+//        }
     }
 
     public void activateUser(String code) {

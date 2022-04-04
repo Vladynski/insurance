@@ -1,5 +1,5 @@
 <template>
-  <div ref="content" class="container">
+  <div ref="container" class="container">
     <span class="title">{{ loginForm ? 'Вход' : 'Создание аккаунта' }}</span>
     <InfoFrame ref="infoForm"/>
     <Login v-if="loginForm" ref="loginForm" :block="blockButtons" :unblock="unblockButtons" :swap="swap"
@@ -23,8 +23,6 @@ import Login from "./Login.vue";
 import CreateAccount from "./CreateAccount.vue";
 import Button from "../items/Button.vue";
 import InfoFrame from '../items/InfoFrame.vue'
-import axios from "axios";
-import {Base64} from "js-base64";
 
 export default {
   props: ['authorized'],
@@ -45,10 +43,10 @@ export default {
       this.getCurrentForm().createAccount()
     },
     swap() {
-      this.$refs.content.style.opacity = '0';
+      this.$refs.container.style.opacity = '0';
       setTimeout(() => {
         this.loginForm = !this.loginForm
-        this.$refs.content.style.opacity = '1';
+        this.$refs.container.style.opacity = '1';
       }, 300);
     },
     getCurrentForm() {

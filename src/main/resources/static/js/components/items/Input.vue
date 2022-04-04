@@ -1,26 +1,41 @@
 <template>
   <div style="width: 100%" class="content">
     <label :style="{labelColor: 'color: ' + labelColor}" class="pre-label" ref="label"></label>
-    <input ref="inputField" @input="update" :class="inputClass" :type="type ? type : 'text'" class="input"
-           :placeholder="placeholder"/>
+    <input ref="inputField" @input="update" @keydown="keydown" :class="inputClass" :type="type ? type : 'text'"
+           class="input"
+           :placeholder="placeholder" v-model="text" :maxlength="maxlength" :readonly="!canEdit"/>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['placeholder', 'type', 'obligatory', 'inputClass', 'labelColor'],
+  props: ['placeholder', 'type', 'obligatory', 'inputClass', 'labelColor', 'value', 'keydown', 'maxlength', 'editable'],
   data() {
     return {
       infoFontSize: '',
-      updateBundle: []
+      updateBundle: [],
+      text: '',
+      canEdit: true
     }
   },
   methods: {
     getText() {
-      return this.$refs.inputField.value
+      return this.text
     },
     showError(text) {
       this.setBadText(text)
+    },
+    setEditable(editable) {
+      this.canEdit = editable
+      this.update()
+    },
+    setTextAndReadonly(text) {
+      this.text = text
+      this.setEditable(false)
+    },
+    clearAndWritable() {
+      this.text = ''
+      this.setEditable(true)
     },
     test() {
       if ((this.obligatory === undefined || this.obligatory) && this.$refs.inputField.value.trim() === '') {
@@ -57,6 +72,11 @@ export default {
     addUpdateBundle(updatableObject) {
       this.updateBundle.push(updatableObject)
     }
+  },
+  mounted() {
+    this.text = this.value || ''
+    this.canEdit = this.editable === undefined ? true : this.editable
+    this.update()
   }
 }
 </script>

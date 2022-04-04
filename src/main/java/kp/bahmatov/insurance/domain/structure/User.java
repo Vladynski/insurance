@@ -1,6 +1,7 @@
 package kp.bahmatov.insurance.domain.structure;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserData;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,7 +41,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private InsuranceData insurance;
+    private InsuranceUserData insurance;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

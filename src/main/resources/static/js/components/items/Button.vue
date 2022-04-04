@@ -1,10 +1,12 @@
 <template>
-  <button @click="click" class="btn" :disabled="blocked" :class="this.class + (blocked ? ' btn-disabled '  : '')"><slot></slot></button>
+  <button @click="clickAction" class="btn" :disabled="blocked" :class="this.class + (blocked ? ' btn-disabled '  : '')">
+    <slot>Button name is not set</slot>
+  </button>
 </template>
 
 <script>
 export default {
-  props: ['click', 'class'],
+  props: ['click', 'class', 'startBlock'],
   data() {
     return {
       blocked: false
@@ -16,7 +18,15 @@ export default {
     },
     unblock() {
       this.blocked = false
+    },
+    clickAction() {
+      if (!this.blocked)
+        this.click()
     }
+  },
+  mounted() {
+    if (this.startBlock)
+      this.block()
   }
 }
 </script>

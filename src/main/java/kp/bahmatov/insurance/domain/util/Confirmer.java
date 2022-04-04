@@ -1,12 +1,11 @@
-package kp.bahmatov.insurance.domain.structure;
+package kp.bahmatov.insurance.domain.util;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import kp.bahmatov.insurance.domain.structure.User;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -14,27 +13,22 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class InsuranceData {
+public class Confirmer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
-    private String phone;
-    private String passportId;
-    private InsuranceDataStatus status;
+    private long id;
     @OneToOne
     private User owner;
-
-    public InsuranceData(User owner) {
-        this.owner = owner;
-        this.status = InsuranceDataStatus.NONE;
-    }
+    @Column(nullable = false, length = 32)
+    private String code;
+    private LocalDateTime deadline;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        InsuranceData that = (InsuranceData) o;
-        return Objects.equals(id, that.id);
+        Confirmer confirmer = (Confirmer) o;
+        return Objects.equals(id, confirmer.id);
     }
 
     @Override

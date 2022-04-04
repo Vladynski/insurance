@@ -1,0 +1,19 @@
+.d-btn-max-size {
+    font-size: 22px;
+    padding: 6px 18px 6px 18px;
+    width: 100%;
+}
+
+.d-input-size {
+    font-size: 20px;
+    height: 45px;
+}
+
+.d-text-size {
+    font-size: 20px;
+    padding: 0 15px 0 15px;
+}
+
+.d-bottom-margin > div {
+    margin-bottom: 20px;
+}

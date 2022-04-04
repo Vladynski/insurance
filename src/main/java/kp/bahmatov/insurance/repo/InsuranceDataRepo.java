@@ -1,7 +1,9 @@
 package kp.bahmatov.insurance.repo;
 
-import kp.bahmatov.insurance.domain.structure.InsuranceData;
-import org.springframework.data.repository.CrudRepository;
+import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserData;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface InsuranceDataRepo extends CrudRepository<InsuranceData, Integer> {
+@Repository
+public interface InsuranceDataRepo extends JpaRepository<InsuranceUserData, Integer> {
 }

@@ -1,10 +1,10 @@
 <template>
-  <Input ref="firstName" placeholder="Имя" input-class="simple-input"/>
-  <Input ref="secondName" placeholder="Фамилия" input-class="simple-input"/>
-  <Input ref="patronymic" placeholder="Отчество" input-class="simple-input"/>
-  <Input ref="email" type="email" placeholder="Email" input-class="simple-input"/>
-  <Input ref="password" type="password" placeholder="Пароль" input-class="simple-input"/>
-  <Input ref="password2" type="password" placeholder="Повторите пароль" input-class="simple-input"/>
+  <Input value="123" ref="firstName" placeholder="Имя" input-class="simple-input"/>
+  <Input value="123" ref="secondName" placeholder="Фамилия" input-class="simple-input"/>
+  <Input value="123" ref="patronymic" placeholder="Отчество" input-class="simple-input"/>
+  <Input value="123@mail.ru" ref="email" type="email" placeholder="Email" input-class="simple-input"/>
+  <Input value="123" ref="password" type="password" placeholder="Пароль" input-class="simple-input"/>
+  <Input value="123" ref="password2" type="password" placeholder="Повторите пароль" input-class="simple-input"/>
 </template>
 
 <script>
@@ -25,31 +25,29 @@ export default {
     createAccount() {
       if (this.testFields()) {
         this.block()
-        this.$axios.post(
-            '/registration',
-            {
-              email: this.$refs.email.getText(),
-              first_name: this.$refs.firstName.getText(),
-              second_name: this.$refs.secondName.getText(),
-              patronymic: this.$refs.patronymic.getText(),
-              password: this.$refs.password.getText()
-            }
+        this.$api.registration(
+            this.$refs.email.getText(),
+            this.$refs.firstName.getText(),
+            this.$refs.secondName.getText(),
+            this.$refs.patronymic.getText(),
+            this.$refs.password.getText()
         ).then(
-            (s) => {
+            (ok) => {
               this.unblock()
               this.infoForm().showOk('Аккаунт создан')
               this.swap()
             },
             (e) => {
               this.unblock()
-              if (Object.values(e.response.data).indexOf('message')) {
-                this.infoForm().showError(e.response.data.message)
-              }
+              this.$api.errorHandler(e, this.infoForm, () => {
+                return this.$refs
+              })
             }
         )
       }
     },
     testFields() {
+      return true //FIXME
       let ok = true
       this.fields.forEach(el => {
         if (!el.test())
@@ -84,4 +82,4 @@ export default {
 }
 </script>
 
-<style src="./login.css"></style>
+<style src="../../vue_css/login.css"></style>

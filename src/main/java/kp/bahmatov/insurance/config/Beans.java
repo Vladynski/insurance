@@ -1,6 +1,8 @@
 package kp.bahmatov.insurance.config;
 
 import kp.bahmatov.insurance.config.error.CustomAuthenticationHandler;
+import kp.bahmatov.insurance.service.PrincipalService;
+import kp.bahmatov.insurance.service.interfaces.Auth;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,5 +20,10 @@ public class Beans {
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return new CustomAuthenticationHandler();
+    }
+
+    @Bean
+    public Auth auth() {
+        return new PrincipalService();
     }
 }

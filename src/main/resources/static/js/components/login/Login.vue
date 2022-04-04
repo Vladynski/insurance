@@ -1,6 +1,6 @@
 <template>
-  <Input ref="username" type="email" placeholder="Email" input-class="simple-input"/>
-  <Input ref="password" placeholder="Пароль" type="password" input-class="simple-input"/>
+  <Input ref="username" type="email" value="admin@admin.admin" placeholder="Email" input-class="simple-input"/>
+  <Input ref="password" placeholder="Пароль" type="password" value="admin" input-class="simple-input"/>
 </template>
 
 <script>
@@ -30,7 +30,6 @@ export default {
             .then(
                 (ok) => {
                   this.authorized()
-                  // this.$axios.defaults.headers.common['Authorization'] = Base64.encode(this.username + ':' + this.password)
                   this.unblock()
                 },
                 (err) => {
@@ -62,7 +61,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
