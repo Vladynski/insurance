@@ -1,11 +1,13 @@
 <template>
-  <button @click="click" class="button menu-button" :class="{selected:menuItem.selected}" style="vertical-align:middle">
-    <span>{{ menuItem.itemName }}</span></button>
+  <button @click="click" class="button menu-button block-row" :class="{selected:menuItem.selected}" style="vertical-align:middle; justify-content: center">
+    <img :src="pictureName" :alt="pictureName.substring(0, pictureName.lastIndexOf('.'))" style="width: 50px;"/>
+    <span>{{ menuItem.itemName }}</span>
+  </button>
 </template>
 
 <script>
 export default {
-  props: ['menuItem', 'preSelect', 'customClick'],
+  props: ['menuItem', 'preSelect', 'customClick', 'pictureName'],
   methods: {
     click() {
       this.preSelect()

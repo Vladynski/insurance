@@ -1,3 +1,5 @@
+import {Base64} from "js-base64";
+
 export function createInsuranceDataObject() {
     return {
         ownerItsMe: undefined,
@@ -12,7 +14,7 @@ export function createInsuranceDataObject() {
             selectedVariants: []
         },
 
-        clear(){
+        clear() {
             this.ownerItsMe = undefined
             this.ownerFirstName = undefined
             this.ownerSecondName = undefined
@@ -81,6 +83,10 @@ export function createApi(axios) {
             )
         },
 
+        base64Auth(username, password) {
+            return 'Basic ' + Base64.encode(username + ':' + password)
+        },
+
         getSelfData(config) {
             return axios.get('/users/self', config)
         },
@@ -90,7 +96,7 @@ export function createApi(axios) {
         },
 
         updateInsuranceData(phone, passportId, content, type) {
-            return axios.post('/insuranceUserData/update',
+            return axios.post('/insuranceUserData',
                 {
                     phone: phone,
                     passport_id: passportId,
@@ -118,5 +124,35 @@ export function createApi(axios) {
             let data = insuranceDataObjet.getInsuranceDataForTransfer()
             return this.axios.post('/insurance?code=' + code, data)
         },
+
+        getMyInsurance() {
+            return this.axios.get('/insurance')
+        },
+
+        editInsuranceUserData(newPhone, password) {
+            return this.axios.put('/insuranceUserData',
+                {
+                    phone: newPhone ? newPhone : ''
+                },
+                {
+                    headers: {
+                        'password': Base64.encode(password)
+                    }
+                }
+            )
+        },
+
+        editUserDataDto(newEmail, password) {
+            return this.axios.put('/users',
+                {
+                    email: newEmail ? newEmail : ''
+                },
+                {
+                    headers: {
+                        'password': Base64.encode(password)
+                    }
+                }
+            )
+        }
     }
 }

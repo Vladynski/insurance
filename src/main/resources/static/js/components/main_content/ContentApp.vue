@@ -6,6 +6,8 @@
     <div class="content">
       <Profile v-if="showProfile" :outUserdata="userdata"/>
       <Calculator v-else-if="showCalculator" :outUserdata="userdata"/>
+      <InsuranceList v-else-if="showInsuranceList"/>
+      <AskQuestion v-else-if="askQuestion"/>
     </div>
   </div>
 </template>
@@ -14,31 +16,35 @@
 import Menu from './menu/Menu.vue'
 import Profile from "./forms/Profile.vue";
 import Calculator from "./forms/Calculator.vue";
+import InsuranceList from "./forms/InsuranceList.vue";
+import AskQuestion from "./forms/AskQuestion.vue";
 
 export default {
-  components: {Calculator, Profile, Menu},
+  components: {AskQuestion, InsuranceList, Calculator, Profile, Menu},
   data() {
     return {
       username: '',
       userdata: undefined,
       showProfile: false,
-      showCalculator: false
+      showCalculator: false,
+      showInsuranceList: false,
+      askQuestion: true
     }
   },
   mounted() {
     this.$api.getSelfData().then(
         (ok) => {
           this.userdata = ok.data
-          // this.showCalculator = true
+          // this.showProfile = true
           this.username = this.userdata.second_name + ' ' + this.userdata.first_name + ' ' + this.userdata.patronymic
         }
     )
-    this.$refs.menu.addItem('👤 Профиль', () => this.showProfile = true, () => this.showProfile = false)
-    this.$refs.menu.addItem('💼 Страховки', () => this.showProfile = true, () => this.showProfile = false)
-    this.$refs.menu.addItem('➗ Оформление', () => this.showCalculator = true, () => this.showCalculator = false)
-    this.$refs.menu.addItem('❔ FAQ', () => this.showCalculator = true, () => this.showCalculator = false)
-    this.$refs.menu.addItem('✉ Задать вопрос', () => this.showCalculator = true, () => this.showCalculator = false)
-    this.$refs.menu.addItem('⚙ Настройки', () => this.showCalculator = true, () => this.showCalculator = false)
+    this.$refs.menu.addItem('Профиль', "profile.png",() => this.showProfile = true, () => this.showProfile = false)
+    this.$refs.menu.addItem('Страховки', "list.png",() => this.showInsuranceList = true, () => this.showInsuranceList = false)
+    this.$refs.menu.addItem('Оформление', "secure-insurance.png",() => this.showCalculator = true, () => this.showCalculator = false)
+    this.$refs.menu.addItem('FAQ', "question.png",() => this.showCalculator = true, () => this.showCalculator = false)
+    this.$refs.menu.addItem('Задать вопрос', "question.png",() => this.askQuestion = true, () => this.askQuestion = false)
+    this.$refs.menu.addItem('Настройки', "question.png",() => this.showCalculator = true, () => this.showCalculator = false)
   }
 }
 </script>

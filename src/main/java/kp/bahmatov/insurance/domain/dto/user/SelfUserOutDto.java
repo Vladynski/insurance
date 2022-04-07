@@ -25,6 +25,6 @@ public class SelfUserOutDto {
         this.email = user.getEmail();
         this.registrationDate = user.getRegistrationDate();
         this.roles = user.getRoles();
-        this.insurance = new InsuranceUserDataDto(user.getInsurance());
+        this.insurance = new InsuranceUserDataDto(user.getInsuranceData());
     }
 }

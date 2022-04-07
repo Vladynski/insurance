@@ -1,6 +1,7 @@
 <template>
   <div class="base-form">
-    <div class="base-form-title def-block" style="font-size: 3.5vmin">
+    <div class="base-form-title def-block title-background-container calculator-title-background"
+         style="font-size: 3.5vmin">
       Оформление обязательного страхования гражданской ответственности
     </div>
     <div class="base-form-data def-block" style="padding: 5%">
@@ -85,4 +86,9 @@ export default {
 <style>
 @import "../../../vue_css/base_form.css";
 @import "../../../vue_css/default_size.css";
+
+.calculator-title-background:after {
+  background-image: url("../../pic/secure-insurance.png");
+  background-color: lightblue;
+}
 </style>

@@ -40,6 +40,7 @@ public class DateConverter {
         }
     }
 
+    @Deprecated
     public static final class HibernateListDateConverter implements AttributeConverter<List<LocalDateTime>, String> {
         private static final String ITEMS_SEPARATOR = ";";
 

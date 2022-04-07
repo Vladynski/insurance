@@ -7,20 +7,20 @@
 
 <script>
 export default {
-  props: ['outsideType', 'defText'],
+  props: ['outsideType', 'defText', 'startVisible', 'constant'],
   data() {
     return {
-      isHide: true,
-      constant: false,
+      isHide: !this.startVisible,
+      isConstant: this.constant,
       bad: false,
       text: '',
-      defaultText: '',
+      defaultText: this.defText,
       type: this.getType(this.outsideType)
     }
   },
   methods: {
     setConstant(constant, type) {
-      this.constant = constant
+      this.isConstant = constant
       if (type === undefined)
         this.showWarning(this.defaultText)
       else
@@ -30,7 +30,7 @@ export default {
       this.defaultText = defText
     },
     hide() {
-      if (this.constant || this.defaultText) {
+      if (this.isConstant || this.defaultText) {
         this.text = this.defaultText
         this.bad = true
         setTimeout(() => {
@@ -44,8 +44,6 @@ export default {
       this.hide()
     },
     show(text, type) {
-      console.log(text);
-      console.log(type);
       this.text = (text === '' ? (this.defaultText ? '' : this.defaultText) : text)
       this.isHide = false
       if (this.type !== undefined)
@@ -80,7 +78,8 @@ export default {
     }
   },
   mounted() {
-    this.defaultText = this.defText
+    if (this.constant)
+      this.setConstant(this.constant, this.type)
   }
 }
 </script>

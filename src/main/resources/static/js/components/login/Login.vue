@@ -24,7 +24,7 @@ export default {
         this.password = this.$refs.password.getText()
         this.$api.getSelfData({
           headers: {
-            'Authorization': 'Basic ' + Base64.encode(this.username + ':' + this.password)
+            'Authorization': this.$api.base64Auth(this.username, this.password)
           }
         })
             .then(

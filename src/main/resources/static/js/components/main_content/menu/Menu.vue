@@ -1,13 +1,15 @@
 <template>
   <div>
     <div class="main-menu-title">
-      <img src="favicon.ico" class="logo" alt="logo"/>
+      <img src="favicon.png" class="logo" alt="logo"/>
       CarInsurance
     </div>
     <div style="padding: 10px; margin-top: -10px">
-      <div class="menu-title" style="font-size: 22px; left: 0">Иван Иваныч Пупкин</div>
-      <MenuButton v-for="item in menuItems" :customClick="item.selectAction" :menu-item="item"
-                  :pre-select="preSelect"/>
+      <div class="menu-title" style="font-size: 22px; left: 0">{{ username }}</div>
+      <MenuButton v-for="item in menuItems"
+                  :customClick="item.selectAction" :menu-item="item"
+                  :pre-select="preSelect"
+                  :pictureName="item.pictureName"/>
     </div>
   </div>
 </template>
@@ -34,12 +36,13 @@ export default {
         }
       })
     },
-    addItem(itemName, selectAction, unselectAction) {
+    addItem(itemName, pictureName, selectAction, unselectAction) {
       this.menuItems.push({
         itemName: itemName,
         selected: false,
         selectAction: selectAction,
-        unselectAction: unselectAction
+        unselectAction: unselectAction,
+        pictureName: pictureName
       })
     }
   }

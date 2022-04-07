@@ -15,7 +15,8 @@
     <InfoFrame v-if="!hasInsuranceData" ref="infoFrame"></InfoFrame>
     <div v-else class="block-row block-row-right"
          :style="['height: 45px; margin-top: 15px', hasSelected ? 'opacity: 1' : 'opacity: 0']">
-      <Checkbox ref="acceptCheckBox">smth_text <a href="#">smth_text</a>
+<!--      FIXME-->
+      <Checkbox ref="acceptCheckBox">ыы <a href="#">tochno ыы</a>
       </Checkbox>
       <Button :click="updateInsuranceData" ref="nextButton" startBlock="true"
               class="btn green-btn d-btn-max-size" style="width: 260px">
@@ -23,7 +24,6 @@
       </Button>
     </div>
   </div>
-</template>
 
 <script>
 import Select from "../../../../items/Select.vue";
@@ -96,10 +96,8 @@ export default {
           this.selectionData = ok.data.selections
           baseSum = ok.data.base_sum
         }, (err) => {
-          console.log(err.response)
-          console.log(this.$refs.baseSumInfoFrame);
           this.$refs.baseSumInfoFrame.setDefaultText('Не удалось получить данные о стоимости услуг. Пожалуйста, обратитесь в поддержку в разделе "Задать вопрос"')
-          this.$refs.baseSumInfoFrame.setConstant(true, 'ERROR')
+          this.$refs.baseSumInfoFrame.setConstant(true, 'error')
         }
     )
     if (this.userdata.insurance.status === 'NONE') {

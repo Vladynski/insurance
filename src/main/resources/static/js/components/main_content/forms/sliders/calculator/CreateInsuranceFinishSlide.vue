@@ -45,7 +45,6 @@ export default {
                 this.createInsuranceData.clear()
                 this.$refs.infoFrame.showOk('Страховка оформлена. Перейдите в раздел Страховки чтобы посмотреть подробности. Так же вам на почту было выслано письмо с условиями сделки')
               }, (err) => {
-                console.log(err.response);
                 this.$api.errorHandler(err, () => this.$refs.infoFrame)
               }
           )

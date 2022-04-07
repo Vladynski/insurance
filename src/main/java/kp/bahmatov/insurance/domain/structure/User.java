@@ -41,7 +41,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private InsuranceUserData insurance;
+    private InsuranceUserData insuranceData;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

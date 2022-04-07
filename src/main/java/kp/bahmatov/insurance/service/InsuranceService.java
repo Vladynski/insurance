@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,14 +40,16 @@ public class InsuranceService {
         throwExceptionIfInsuranceAlreadyExists(insuranceDto);
 
         Insurance insurance = new Insurance();
-        insurance.setCreator(auth.getUser().getInsurance());
+        insurance.setCreator(auth.getUser().getInsuranceData());
         insurance.setCreatorIsOwner(insuranceDto.getCreatorIsOwner());
         insurance.setOwnerFirstName(insuranceDto.getOwnerFirstName());
         insurance.setOwnerSecondName(insuranceDto.getOwnerSecondName());
         insurance.setOwnerPatronymic(insuranceDto.getOwnerPatronymic());
         insurance.setWinNumber(insuranceDto.getWinNumber());
         insurance.setRegistrationNumber(insuranceDto.getRegistrationNumber());
-        insurance.setInsuranceStatus(InsuranceStatus.AWAITING_PAYMENT);
+        insurance.setStatus(InsuranceStatus.AWAITING_PAYMENT);
+        insurance.setEndTime(LocalDateTime.now().plusMonths(6));
+        insurance.setVariants(Arrays.asList(insuranceDto.getSelectionVariantsIds()));
 
         List<SelectionVariant> variants = selectionService.findByIds(List.of(insuranceDto.getSelectionVariantsIds()));
         float sum = calculate(variants);
@@ -60,8 +64,8 @@ public class InsuranceService {
     public void throwExceptionIfInsuranceAlreadyExists(InsuranceInDto insuranceDto) {
         Insurance foundInsurance = insuranceRepo.findInsuranceByWinNumber(insuranceDto.getWinNumber()).orElse(null);
         if (foundInsurance != null &&
-                (foundInsurance.getInsuranceStatus() == InsuranceStatus.VALID ||
-                foundInsurance.getInsuranceStatus() == InsuranceStatus.AWAITING_PAYMENT))
+                (foundInsurance.getStatus() == InsuranceStatus.VALID ||
+                foundInsurance.getStatus() == InsuranceStatus.AWAITING_PAYMENT))
             throw new BadRequestException("Страховка на это транспортное средство уже оформлена и действует, или ожидает оплаты.");
     }
 
@@ -88,5 +92,9 @@ public class InsuranceService {
 
         if (groupIds.size() != variants.size())
             throw new BadRequestException("В запросе есть два или более варианта из одной группы");
+    }
+
+    public List<Insurance> getAllMy() {
+        return insuranceRepo.findAllByCreator(auth.getUser().getInsuranceData());
     }
 }

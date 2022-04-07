@@ -19,6 +19,18 @@ export function checkPhoneInputUpdate(event) {
     return resultPhone
 }
 
+export function getFormatPhoneNumber(phoneNumber) {
+    return '+' + phoneNumber.substring(0, 3) + ' ' + phoneNumber.substring(3, 5) + ' ' + phoneNumber.substring(5, 8) + '-' + phoneNumber.substring(8, 10) + '-' + phoneNumber.substring(10, 12)
+}
+
+export function clearPhoneNumber(phoneNumber) {
+    return phoneNumber.replaceAll(/\D/g, '')
+}
+
+export function div(dividend, divider){
+    return Math.floor(dividend / divider)
+}
+
 // export function encodeImageFileAsURL(element, callback) {
 //     const file = element.target.value;
 //     const reader = new FileReader();

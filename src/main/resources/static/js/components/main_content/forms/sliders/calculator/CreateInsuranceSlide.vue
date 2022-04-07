@@ -63,8 +63,6 @@ export default {
               this.nextSlide()
             },
             (err) => {
-              console.log(err.response);
-              console.log(this.createInsuranceData.getInsuranceDataForTransfer());
               this.$api.errorHandler(err,
                   () => this.$refs.infoFrame,
                   () => this.$refs)

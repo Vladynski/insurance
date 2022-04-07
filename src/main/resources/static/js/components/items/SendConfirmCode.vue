@@ -24,7 +24,8 @@ export default {
     return {
       sendTimeout: -1,
       show: false,
-      errorMessage: undefined
+      errorMessage: undefined,
+      timer: undefined
     }
   },
   methods: {

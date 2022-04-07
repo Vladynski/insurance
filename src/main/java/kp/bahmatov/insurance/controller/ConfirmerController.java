@@ -29,9 +29,7 @@ public class ConfirmerController {
     @GetMapping
     private void createConfirmer() {
         if (confirmerService.canIGenerateNewCode()) {
-            String code = confirmerService.generateNewCodeForMe(
-                    SettingsService.getConfirmerLifetimeMinutes().getIntValue(),
-                    SettingsService.getConfirmerLifetimeHours().getIntValue());
+            String code = confirmerService.generateNewCodeForMe();
             try {
                 mailSender.send(auth.getUser().getEmail(), "Код подтверждения", LetterFormatter.getLetterWithCode(code));
             } catch (MessagingException e) {

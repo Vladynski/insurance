@@ -5,6 +5,7 @@ import javax.persistence.AttributeConverter;
 import java.util.Arrays;
 import java.util.Collections;
 
+@Deprecated
 public class FloatListConverter {
     public static final class HibernateFloatListConverter implements AttributeConverter<Iterable<Float>, String> {
         private static final char ITEMS_SEPARATOR = ';';

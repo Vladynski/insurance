@@ -1,10 +1,13 @@
 package kp.bahmatov.insurance.domain.structure.insurance;
 
+import kp.bahmatov.insurance.config.dataformat.IntListConverter;
 import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserData;
 import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,7 +28,11 @@ public class Insurance {
     private String ownerPatronymic;
     private String winNumber;
     private String registrationNumber;
-    private InsuranceStatus insuranceStatus;
+    @Enumerated(EnumType.STRING)
+    private InsuranceStatus status;
+    private LocalDateTime endTime;
+    @Convert(converter = IntListConverter.HibernateIntListConverter.class)
+    private List<Integer> variants;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Payment payment;

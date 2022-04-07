@@ -1,9 +1,9 @@
 <template>
   <div style="width: 100%" class="content">
-    <label :style="{labelColor: 'color: ' + labelColor}" class="pre-label" ref="label"></label>
+    <label :style="labelColor ? 'color: ' + labelColor : ''" class="pre-label" ref="label" :title="badText"></label>
     <input ref="inputField" @input="update" @keydown="keydown" :class="inputClass" :type="type ? type : 'text'"
            class="input"
-           :placeholder="placeholder" v-model="text" :maxlength="maxlength" :readonly="!canEdit"/>
+           :placeholder="placeholderText" v-model="text" :maxlength="maxlength" :readonly="!canEdit"/>
   </div>
 </template>
 
@@ -15,7 +15,9 @@ export default {
       infoFontSize: '',
       updateBundle: [],
       text: '',
-      canEdit: true
+      placeholderText: this.placeholder,
+      canEdit: true,
+      badText: undefined
     }
   },
   methods: {
@@ -29,6 +31,9 @@ export default {
       this.canEdit = editable
       this.update()
     },
+    getPlaceholder() {
+      return this.placeholderText
+    },
     setTextAndReadonly(text) {
       this.text = text
       this.setEditable(false)
@@ -36,6 +41,10 @@ export default {
     clearAndWritable() {
       this.text = ''
       this.setEditable(true)
+    },
+    setPlaceholder(newPlaceholder){
+      this.placeholderText = newPlaceholder
+      this.setPlaceholderText()
     },
     test() {
       if ((this.obligatory === undefined || this.obligatory) && this.$refs.inputField.value.trim() === '') {
@@ -45,6 +54,7 @@ export default {
       return true
     },
     update() {
+      this.badText = undefined
       if (this.getText() === '') {
         this.$refs.label.style.opacity = '0'
         this.$refs.inputField.classList.remove('bad')
@@ -57,13 +67,14 @@ export default {
       this.updateBundle.forEach((el) => el.update())
     },
     setBadText(text) {
+      this.badText = text
       this.$refs.label.textContent = text
       this.$refs.label.style.opacity = '1'
       this.$refs.inputField.classList.add('bad')
       this.$refs.label.classList.add('bad-label')
     },
     setPlaceholderText() {
-      this.$refs.label.textContent = this.placeholder
+      this.$refs.label.textContent = this.placeholderText
       this.$refs.label.style.opacity = '1'
       this.$refs.inputField.classList.remove('bad')
       this.$refs.label.classList.remove('bad-label')
@@ -97,6 +108,7 @@ export default {
   position: absolute;
   top: -15px;
   opacity: 0;
+  overflow: hidden;
 }
 
 .bad-label:before {

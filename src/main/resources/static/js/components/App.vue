@@ -13,7 +13,6 @@ export default {
   mounted() {
     this.$api.getSelfData().then(
         (ok) => {
-          console.log(ok);
           this.authorized = true
           this.show = true
         },

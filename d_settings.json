@@ -2,13 +2,13 @@
   {
     "key": "confirmerGenerateMinPeriodMinutes",
     "value": "5",
-    "description": "Минимальное время для генерации нового кода подтверждения",
+    "description": "Минимальное время для генерации нового кода подтверждения (мин)",
     "type": "INTEGER"
   },
   {
     "key": "confirmerLifetimeMinutes",
     "value": "15",
-    "description": "Время жизни кода подтверждения (минуты)",
+    "description": "Время жизни кода подтверждения (мин)",
     "type": "INTEGER"
   },
   {
@@ -20,13 +20,13 @@
   {
     "key": "mailSendTimeoutSeconds",
     "value": "120",
-    "description": "Минимальное время между отправками Email сообщений",
+    "description": "Минимальное время между отправками Email сообщений (сек)",
     "type": "INTEGER"
   },
   {
     "key": "baseSum",
     "value": "30",
-    "description": "Начальная ставка в расчёте страховки",
+    "description": "Начальная ставка в расчёте страховки (BYN до двух знаков)",
     "type": "DOUBLE"
   }
 ]

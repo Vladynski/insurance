@@ -55,14 +55,14 @@ export default {
       if (this.canNext()) {
         if (this.currentSlide > -1)
           this.slides[this.currentSlide].hide()
-        this.showSlide(++this.currentSlide)
+        this.showSlide(this.currentSlide + 1)
         this.updateButtons()
       }
     },
     previewSlide() {
       if (this.canPreview()) {
         this.slides[this.currentSlide].hide()
-        this.showSlide(--this.currentSlide)
+        this.showSlide(this.currentSlide - 1)
         this.updateButtons()
       }
     },
@@ -70,6 +70,7 @@ export default {
       setTimeout(() => {
         this.slides[index].show()
         this.updateButtons()
+        this.currentSlide = index
       }, 300)
     },
     canNext() {
@@ -94,10 +95,5 @@ export default {
   top: 50%;
   transform: translate(-50%, -50%);
   font-size: 16px;
-}
-
-.separator {
-  width: 100%;
-  border-top: 2px solid #d0d0d0;
 }
 </style>

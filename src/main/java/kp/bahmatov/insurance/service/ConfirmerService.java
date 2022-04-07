@@ -62,6 +62,12 @@ public class ConfirmerService {
         return confirmer != null && LocalDateTime.now().plusMinutes(minutes).isBefore(confirmer.getDeadline()) ? confirmer.getCode() : null;
     }
 
+    public String generateNewCodeForMe() {
+        return generateNewCodeForMe(
+                SettingsService.getConfirmerLifetimeMinutes().getIntValue(),
+                SettingsService.getConfirmerLifetimeHours().getIntValue());
+    }
+
     public String generateNewCodeForMe(int lifetimeMinutes, int lifetimeHours) {
         User owner = auth.getUser();
 
