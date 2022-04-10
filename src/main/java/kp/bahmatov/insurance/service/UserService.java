@@ -1,6 +1,7 @@
 package kp.bahmatov.insurance.service;
 
 import kp.bahmatov.insurance.domain.dto.edit.EditUserDataDto;
+import kp.bahmatov.insurance.domain.dto.filter.UserFilter;
 import kp.bahmatov.insurance.domain.dto.user.CreateUserInDto;
 import kp.bahmatov.insurance.domain.structure.insurance.content.Content;
 import kp.bahmatov.insurance.domain.structure.insurance.content.ContentType;
@@ -8,18 +9,27 @@ import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserDa
 import kp.bahmatov.insurance.domain.structure.Role;
 import kp.bahmatov.insurance.domain.structure.User;
 import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserDataStatus;
+import kp.bahmatov.insurance.exceptions.ForbiddenException;
 import kp.bahmatov.insurance.exceptions.PasswordConfirmationException;
 import kp.bahmatov.insurance.exceptions.UserAlreadyExistsException;
 import kp.bahmatov.insurance.exceptions.UserNotFoundException;
 import kp.bahmatov.insurance.repo.InsuranceDataRepo;
 import kp.bahmatov.insurance.repo.UserRepo;
+import kp.bahmatov.insurance.repo.specification.reflection.SpecificBuilderByDto;
+import kp.bahmatov.insurance.repo.specification.SpecificationBuilder;
+import kp.bahmatov.insurance.repo.specification.StructureSpecification;
 import kp.bahmatov.insurance.service.interfaces.Auth;
+import kp.bahmatov.insurance.util.CodeGenerator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -88,7 +98,7 @@ public class UserService {
 
     public void addUser(CreateUserInDto createUserDto) {
         if (userRepo.findByEmail(createUserDto.getEmail()).orElse(null) != null)
-            throw new UserAlreadyExistsException("A user is already registered to this email");
+            throw new UserAlreadyExistsException("На этот Email уже зарегистрирован аккаунт");
 
         User user = new User();
 
@@ -132,14 +142,101 @@ public class UserService {
     }
 
     public void updateUserData(EditUserDataDto editInsuranceDataDto, String password) {
-        if (editInsuranceDataDto.getEmail() != null &&
-                !editInsuranceDataDto.getEmail().isBlank()) {
-            User user = auth.getUser();
-            if (!user.getEmail().equals(editInsuranceDataDto.getEmail())) {
-                throwExceptionIfItIsNotMyPassword(password);
-                user.setEmail(editInsuranceDataDto.getEmail());
-                userRepo.save(user);
-            }
+        User self = auth.getUser();
+        if (isAdmin(self)) {
+            updateOtherData(self, editInsuranceDataDto);
+        } else {
+            updateSelfData(self, editInsuranceDataDto, password);
         }
+    }
+
+    private void updateOtherData(User self, EditUserDataDto editDto) {
+        if (editDto.isContainsChanges()) {
+            Integer userId = editDto.getId();
+            User edit;
+            if (userId == null)
+                edit = self;
+            else
+                edit = userRepo.findById(userId).orElseThrow(UserNotFoundException::new);
+
+            if (editDto.getFirstName() != null)
+                edit.setFirstName(editDto.getFirstName());
+            if (editDto.getSecondName() != null)
+                edit.setSecondName(editDto.getSecondName());
+            if (editDto.getPatronymic() != null)
+                edit.setPatronymic(editDto.getPatronymic());
+            if (editDto.getEmail() !=    null)
+                edit.setEmail(editDto.getEmail());
+            if (editDto.getPhone() != null)
+                edit.getInsuranceData().setPhone(editDto.getPhone());
+            if (editDto.getPassportId() != null)
+                edit.getInsuranceData().setPassportId(editDto.getPassportId());
+            if (editDto.getAdminStatus() != null) {
+                if (editDto.getAdminStatus()) {
+                    if (!isAdmin(edit))
+                        edit.getRoles().add(Role.ADMIN);
+                } else {
+                    if (isAdmin(edit))
+                        edit.getRoles().remove(Role.ADMIN);
+                }
+            }
+            if (editDto.getInsuranceDataStatus() != null)
+                edit.getInsuranceData().setStatus(editDto.getInsuranceDataStatus());
+
+
+            insuranceDataRepo.save(edit.getInsuranceData());
+            userRepo.save(edit);
+        }
+    }
+
+    private void updateSelfData(User self, EditUserDataDto editDto, String password) {
+        if (editDto.isContainsChanges()) {
+            throwExceptionIfItIsNotMyPassword(password);
+            if (editDto.getEmail() != null)
+                self.setEmail(editDto.getEmail());
+            if (editDto.getPhone() != null)
+                self.getInsuranceData().setPhone(editDto.getPhone());
+            insuranceDataRepo.save(self.getInsuranceData());
+            userRepo.save(self);
+        }
+    }
+
+    public List<User> filter(UserFilter userFilter) {
+        if (userFilter.getPassportId() != null) {
+            List<User> resultList = new ArrayList<>(1);
+            insuranceDataRepo.findByPassportId(userFilter.getPassportId()).ifPresent(el -> resultList.add(el.getOwner()));
+            return resultList;
+        }
+
+        SpecificationBuilder<User> builder = new SpecificationBuilder<>(StructureSpecification::new);
+
+        SpecificBuilderByDto.fillingBuilder(builder, userFilter);
+
+        Specification<User> specification = builder.build();
+
+        List<User> result = userRepo.findAll(specification);
+
+        if (userFilter.getAdmin() != null && userFilter.getAdmin()) {
+            result = result.stream().filter(this::isAdmin).toList();
+        }
+
+        return result;
+    }
+
+    public void ban(Integer userId) {
+        if (userId != null) {
+            User user = userRepo.findById(userId).orElseThrow(UserNotFoundException::new);
+            if (isAdmin(user))
+                throw new ForbiddenException("Нельзя забанить пользователя со статусом ADMIN");
+            user.setActivationCode(CodeGenerator.generateCode());
+        }
+    }
+
+    private boolean isAdmin(User user) {
+        return user.getRoles().contains(Role.ADMIN);
+    }
+
+    public User getSelfData() {
+        return userRepo.findById(auth.getUser().getId()).get();
     }
 }

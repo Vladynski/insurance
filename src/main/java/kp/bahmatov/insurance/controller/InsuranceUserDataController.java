@@ -1,11 +1,12 @@
 package kp.bahmatov.insurance.controller;
 
-import kp.bahmatov.insurance.domain.dto.edit.EditInsuranceDataDto;
 import kp.bahmatov.insurance.domain.dto.insurance.userdata.InsuranceUserDataDto;
-import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserData;
 import kp.bahmatov.insurance.service.InsuranceUserDataService;
 import kp.bahmatov.insurance.service.interfaces.Auth;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -23,12 +24,5 @@ public class InsuranceUserDataController {
     @PostMapping
     private void init(@Valid @RequestBody InsuranceUserDataDto requestInsurance) {
         insuranceUserDataService.updateInsuranceData(requestInsurance);
-    }
-
-    @PutMapping
-    public void edit(
-            @RequestHeader("password") String password,
-            @Valid @RequestBody EditInsuranceDataDto editInsuranceDataDto) {
-        insuranceUserDataService.updateInsuranceData(editInsuranceDataDto, password);
     }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="block-column insurance-data-form" style="height: 250px">
     <div class="block-row header">
-      <div class="block-row header-dark header-content">
+      <div class="block-row header-content">
         <div class="header-text header-key">
           WIN номер:
         </div>
@@ -9,7 +9,7 @@
           {{ winNumber }}
         </div>
       </div>
-      <div class="block-row header-light header-content">
+      <div class="block-row header-content">
         <div class="header-text header-key">
           Регистрационный номер:
         </div>
@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <div class="block-row">
+    <div class="block-row insurance-data-body-container">
       <div class="block-column insurance-data-body">
         <InsuranceDataKeyValue name="Фамилия собственника">{{ ownerSecondName }}</InsuranceDataKeyValue>
         <InsuranceDataKeyValue name="Имя собственника">{{ ownerFirstName }}</InsuranceDataKeyValue>
@@ -33,15 +33,15 @@
       </div>
     </div>
     <div class="block-row header">
-      <div class="block-row footer-dark header-content">
+      <div class="block-row header-content">
         <div class="header-text header-key">
           Действует до:
         </div>
         <div class="header-text header-value">
-          {{endTime}}
+          {{ endTime }}
         </div>
       </div>
-      <div class="block-row footer-light header-content">
+      <div class="block-row header-content">
         <div class="header-text header-key">
           Стоимость:
         </div>
@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import InsuranceDataKeyValue from "./sliders/InsuracneDataNameValue.vue";
-import {div} from '../../../api/Util.js'
+import InsuranceDataKeyValue from "./InsuranceDataNameValue.vue";
+import {div} from '../../../../api/Util.js'
 
 export default {
   components: {InsuranceDataKeyValue},
@@ -135,6 +135,12 @@ export default {
   font-size: 20px;
   font-weight: normal;
   max-height: 250px;
+  border-radius: 5px;
+  box-shadow: #888888 -1px 2px 5px;
+}
+
+.insurance-data-form:hover {
+  transform: scale(1.02, 1.02);
 }
 
 .header {
@@ -151,27 +157,11 @@ export default {
   padding-left: 10px;
   padding-right: 10px;
   justify-content: flex-start;
-  background-color: white;
-}
-
-.header-dark {
-  background-color: #462446;
   background-color: transparent;
 }
 
-.header-light {
-  background-color: #512B51;
-  background-color: transparent;
-}
-
-.footer-dark {
-  background-color: #643564;
-  background-color: transparent;
-}
-
-.footer-light {
-  background-color: #753d75;
-  background-color: transparent;
+.insurance-data-body-container {
+  background: linear-gradient(45grad, #ffdeff, #dac9ff);
 }
 
 .header-text {

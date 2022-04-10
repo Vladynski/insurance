@@ -29,6 +29,7 @@ public class SelectionService {
     }
 
     @Deprecated
+    //FIXME read and parse to util class
     private void fillingBdIfItsEmpty() {
         if (selectionGroupRepo.count() == 0) {
             ObjectMapper objectMapper = new ObjectMapper();

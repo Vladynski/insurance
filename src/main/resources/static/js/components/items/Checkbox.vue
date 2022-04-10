@@ -1,5 +1,5 @@
 <template>
-  <label class="cb-container">
+  <label :class="['cb-container', changed ? 'changed-check-box' : '']">
     <slot></slot>
     <input type="checkbox" v-model="selected" :disabled="!canEdit"/>
     <span class="checkmark"></span>
@@ -27,22 +27,36 @@ export default {
       type: Boolean,
       default: true
     },
+    changeListener: {
+      type: Boolean,
+      default: false
+    },
     button: Object
   },
   data() {
     return {
       selected: this.defSelected,
       canEdit: this.editable,
-      checkButton: undefined
+      checkButton: undefined,
+      startValue: this.changeListener ? this.defSelected : undefined,
+      changed: false
     }
   },
   methods: {
+    updateStartValue(){
+      this.startValue = this.selected
+      this.changed = false
+    },
+    getNewValue() {
+      return this.changed ? this.selected : undefined
+    },
     setButton(button) {
       this.checkButton = button
     }
   },
   watch: {
     selected(newVal) {
+      this.changed = this.changeListener && this.startValue !== newVal
       if (this.canEdit) {
         if (this.checkButton) {
           if (newVal)
@@ -93,6 +107,12 @@ export default {
   background-color: #eee;
   border-radius: 4px;
   border: 2px solid lightblue;
+}
+
+
+.changed-check-box > .checkmark{
+  border-color: #f6cc8d;
+  background-color: #dec79f;
 }
 
 .cb-container:hover input ~ .checkmark {

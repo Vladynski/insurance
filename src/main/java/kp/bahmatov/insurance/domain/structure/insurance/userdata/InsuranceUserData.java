@@ -21,6 +21,7 @@ public class InsuranceUserData {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
     private String phone;
+    @Column(unique = true)
     private String passportId;
     @OneToOne(cascade = CascadeType.ALL)
     private Content photo;

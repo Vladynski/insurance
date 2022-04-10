@@ -1,4 +1,5 @@
 import {Base64} from "js-base64";
+import {clearRegistrationNumber, clearWinNumber} from "./Util";
 
 export function createInsuranceDataObject() {
     return {
@@ -27,13 +28,14 @@ export function createInsuranceDataObject() {
 
         getInsuranceDataForTransfer() {
             // noinspection JSUnresolvedVariable
+            console.log(clearRegistrationNumber(this.registrationNumber));
             return {
                 creator_is_owner: this.ownerItsMe | false,
                 owner_first_name: this.ownerFirstName ? this.ownerFirstName : '',
                 owner_second_name: this.ownerSecondName ? this.ownerSecondName : '',
                 owner_patronymic: this.ownerPatronymic ? this.ownerPatronymic : '',
-                win_number: this.winNumber ? this.winNumber : '',
-                registration_number: this.registrationNumber ? this.registrationNumber : '',
+                win_number: this.winNumber ? clearWinNumber(this.winNumber) : '',
+                registration_number: this.registrationNumber ? clearRegistrationNumber(this.registrationNumber) : '',
                 selection_variants_ids: this.selectedVariantsIds ? this.selectedVariantsIds : []
             }
         },
@@ -46,6 +48,7 @@ export function createInsuranceDataObject() {
 }
 
 export function createApi(axios) {
+    console.log(axios);
     return {
         axios: axios,
 
@@ -71,7 +74,8 @@ export function createApi(axios) {
                      second_name,
                      patronymic,
                      password) {
-            return this.$axios.post(
+
+            return this.axios.post(
                 '/registration',
                 {
                     email: email,
@@ -88,15 +92,15 @@ export function createApi(axios) {
         },
 
         getSelfData(config) {
-            return axios.get('/users/self', config)
+            return this.axios.get('/users/self', config)
         },
 
         requestConfirmationCode() {
-            return axios.get('/confirm')
+            return this.axios.get('/confirm')
         },
 
         updateInsuranceData(phone, passportId, content, type) {
-            return axios.post('/insuranceUserData',
+            return this.axios.post('/insuranceUserData',
                 {
                     phone: phone,
                     passport_id: passportId,
@@ -108,11 +112,11 @@ export function createApi(axios) {
         },
 
         getSelectionData() {
-            return axios.get("/selection")
+            return this.axios.get("/selection")
         },
 
         getMailSendTimeoutSeconds() {
-            return axios.get("/settings/mailSendTimeoutSeconds")
+            return this.axios.get("/settings/mailSendTimeoutSeconds")
         },
 
         validInsuranceData(insuranceDataObjet) {
@@ -129,11 +133,14 @@ export function createApi(axios) {
             return this.axios.get('/insurance')
         },
 
-        editInsuranceUserData(newPhone, password) {
-            return this.axios.put('/insuranceUserData',
-                {
-                    phone: newPhone ? newPhone : ''
-                },
+        editUserDataDto(password, newEmail, phone) {
+            let data = {}
+            if (newEmail)
+                data['email'] = newEmail
+            if (phone)
+                data['phone'] = phone
+
+            return this.axios.put('/users', data,
                 {
                     headers: {
                         'password': Base64.encode(password)
@@ -142,17 +149,14 @@ export function createApi(axios) {
             )
         },
 
-        editUserDataDto(newEmail, password) {
-            return this.axios.put('/users',
-                {
-                    email: newEmail ? newEmail : ''
-                },
-                {
-                    headers: {
-                        'password': Base64.encode(password)
-                    }
-                }
-            )
+        sendQuestion(text) {
+            return this.axios.post('/questions', {
+                text: text
+            })
+        },
+
+        getFaqList() {
+            return this.axios.get('/faq')
         }
     }
 }

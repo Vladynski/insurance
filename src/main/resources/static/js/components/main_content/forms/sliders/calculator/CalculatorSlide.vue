@@ -24,6 +24,7 @@
       </Button>
     </div>
   </div>
+</template>
 
 <script>
 import Select from "../../../../items/Select.vue";

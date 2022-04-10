@@ -1,11 +1,11 @@
 package kp.bahmatov.insurance.service;
 
-import kp.bahmatov.insurance.domain.dto.edit.EditInsuranceDataDto;
 import kp.bahmatov.insurance.domain.dto.insurance.userdata.InsuranceUserDataDto;
 import kp.bahmatov.insurance.domain.structure.User;
 import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserData;
 import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserDataStatus;
 import kp.bahmatov.insurance.domain.structure.insurance.content.Content;
+import kp.bahmatov.insurance.exceptions.BadRequestException;
 import kp.bahmatov.insurance.repo.InsuranceDataRepo;
 import kp.bahmatov.insurance.service.interfaces.Auth;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,9 @@ public class InsuranceUserDataService {
     }
 
     public void updateInsuranceData(InsuranceUserDataDto requestInsurance) {
+        if (insuranceRepo.findByPassportId(requestInsurance.getPassportId()).isPresent())
+            throw new BadRequestException("Паспорт уже зарегистрирован");
+
         User user = auth.getUser();
 
         InsuranceUserData insurance = user.getInsuranceData();
@@ -39,17 +42,5 @@ public class InsuranceUserDataService {
         insurance.setPhoto(content);
 
         insuranceRepo.saveAndFlush(insurance);
-    }
-
-    public void updateInsuranceData(EditInsuranceDataDto editInsuranceDataDto, String password) {
-        if (editInsuranceDataDto.getPhone() != null &&
-                !editInsuranceDataDto.getPhone().isBlank()) {
-            InsuranceUserData insuranceData = this.auth.getUser().getInsuranceData();
-            if (!insuranceData.getPhone().equals(editInsuranceDataDto.getPhone())) {
-                userService.throwExceptionIfItIsNotMyPassword(password);
-                insuranceData.setPhone(editInsuranceDataDto.getPhone());
-                insuranceRepo.saveAndFlush(insuranceData);
-            }
-        }
     }
 }

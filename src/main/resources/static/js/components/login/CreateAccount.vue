@@ -1,6 +1,5 @@
 <template>
   <!--FIXME-->
-  <Input value="123" ref="firstName" placeholder="Имя" input-class="simple-input"/>
   <Input value="123" ref="secondName" placeholder="Фамилия" input-class="simple-input"/>
   <Input value="123" ref="patronymic" placeholder="Отчество" input-class="simple-input"/>
   <Input value="123@mail.ru" ref="email" type="email" placeholder="Email" input-class="simple-input"/>

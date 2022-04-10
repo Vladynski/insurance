@@ -10,9 +10,9 @@
     <Checkbox ref="creatorIsOwner" :select="ownerItsMe" :unselect="ownerIsNotMe"
               :defSelected="this.createInsuranceData.ownerItsMe">Собственником являюсь я
     </Checkbox>
-    <Input ref="winNumber" inputClass="d-input-size" placeholder="Идентификационный номер ТС (WIN)"
+    <Input ref="winNumber" inputClass="d-input-size" maxlength="21" placeholder="Идентификационный номер ТС (WIN)"
            :value="this.createInsuranceData.winNumber"/>
-    <Input ref="registrationNumber" inputClass="d-input-size" placeholder="Регистрационный знак"
+    <Input ref="registrationNumber" inputClass="d-input-size" maxlength="9" placeholder="Регистрационный знак ЦЦЦЦ ББ-Ц"
            :value="this.createInsuranceData.registrationNumber"/>
     <Button ref="nextButton" :click="collectData" class="simple-btn btn green-btn">Продолжить</Button>
   </div>

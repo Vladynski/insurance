@@ -5,6 +5,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class UserNotFoundException extends CustomException {
+    public UserNotFoundException() {
+        this("Пользователем с таким id не найден");
+    }
+
     public UserNotFoundException(String message) {
         super(message, HttpStatus.NOT_FOUND);
     }

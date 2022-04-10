@@ -1,28 +1,61 @@
 <template>
   <div style="width: 100%" class="content">
-    <label :style="labelColor ? 'color: ' + labelColor : ''" class="pre-label" ref="label" :title="badText"></label>
-    <input ref="inputField" @input="update" @keydown="keydown" :class="inputClass" :type="type ? type : 'text'"
+    <label :style="[labelColor ? 'color: ' + labelColor : '', badText || text !== '' ? 'opacity: 1' :'']"
+           :class="['pre-label', badText ? 'bad-label' : '']" ref="label"
+           :title="badText">{{ badText ? badText : placeholderText }}</label>
+    <input ref="inputField" @input="update" @keydown="keydown" :disabled="!canEdit"
+           :class="['custom-input', inputClass, badText ? 'bad' : '', changed ? 'changed-input' : '']"
+           :type="type ? type : 'text'"
            class="input"
-           :placeholder="placeholderText" v-model="text" :maxlength="maxlength" :readonly="!canEdit"/>
+           :placeholder="placeholderText"
+           v-model="text"
+           :maxlength="maxlength"
+           :readonly="!canEdit"/>
   </div>
 </template>
 
 <script>
+import {removeSpaces} from "../../api/Util.js";
+
 export default {
-  props: ['placeholder', 'type', 'obligatory', 'inputClass', 'labelColor', 'value', 'keydown', 'maxlength', 'editable'],
+  props: [
+    'placeholder', 'type', 'obligatory', 'inputClass',
+    'labelColor', 'value', 'keydown', 'maxlength',
+    'editable', 'changeListener', 'updateStartValueListener'
+  ],
   data() {
     return {
       infoFontSize: '',
       updateBundle: [],
       text: '',
       placeholderText: this.placeholder,
-      canEdit: true,
-      badText: undefined
+      canEdit: this.editable === undefined ? true : this.editable,
+      badText: undefined,
+      startValue: undefined,
+      changed: false,
     }
   },
   methods: {
+    updateStartValue() {
+      this.startValue = this.getText()
+      this.changed = false
+      if (this.updateStartValueListener)
+        this.updateStartValueListener(this.startValue)
+    },
+    getNewValue() {
+      return this.changed ? this.getText() : undefined;
+    },
+    setText(text) {
+      this.text = text
+    },
     getText() {
       return this.text
+    },
+    getTextU() {
+      if (removeSpaces(this.text) === '')
+        return undefined
+      else
+        return this.text
     },
     showError(text) {
       this.setBadText(text)
@@ -42,9 +75,8 @@ export default {
       this.text = ''
       this.setEditable(true)
     },
-    setPlaceholder(newPlaceholder){
+    setPlaceholder(newPlaceholder) {
       this.placeholderText = newPlaceholder
-      this.setPlaceholderText()
     },
     test() {
       if ((this.obligatory === undefined || this.obligatory) && this.$refs.inputField.value.trim() === '') {
@@ -53,14 +85,12 @@ export default {
       }
       return true
     },
+    silentTest() {
+      return !((this.obligatory === undefined || this.obligatory) && this.$refs.inputField.value.trim() === '');
+    },
     update() {
+      this.changed = this.changeListener && this.startValue !== this.text
       this.badText = undefined
-      if (this.getText() === '') {
-        this.$refs.label.style.opacity = '0'
-        this.$refs.inputField.classList.remove('bad')
-      } else {
-        this.setPlaceholderText()
-      }
       this.updateBundles()
     },
     updateBundles() {
@@ -68,17 +98,6 @@ export default {
     },
     setBadText(text) {
       this.badText = text
-      this.$refs.label.textContent = text
-      this.$refs.label.style.opacity = '1'
-      this.$refs.inputField.classList.add('bad')
-      this.$refs.label.classList.add('bad-label')
-    },
-    setPlaceholderText() {
-      this.$refs.label.textContent = this.placeholderText
-      this.$refs.label.style.opacity = '1'
-      this.$refs.inputField.classList.remove('bad')
-      this.$refs.label.classList.remove('bad-label')
-      this.$refs.label.classList.add('info-label')
     },
     addUpdateBundle(updatableObject) {
       this.updateBundle.push(updatableObject)
@@ -86,15 +105,35 @@ export default {
   },
   mounted() {
     this.text = this.value || ''
-    this.canEdit = this.editable === undefined ? true : this.editable
+    if (this.changeListener)
+      this.startValue = this.text
     this.update()
   }
 }
 </script>
 
 <style>
-.bad {
-  border-color: red;
+.custom-input:disabled, .custom-input:disabled:not(:placeholder-shown):not(.bad), .custom-input:disabled:hover, .custom-input:disabled:focus {
+  background: #eaeaea;
+  cursor: default;
+}
+
+.custom-input {
+  box-shadow: #ababab -1px 2px 5px;
+  transition-duration: 500ms;
+  cursor: text;
+}
+
+.custom-input:hover {
+  transform: scale(1.01, 1.01);
+  border-color: #adecad;
+  box-shadow: #adecad -1px 2px 5px;
+}
+
+.custom-input:focus, .custom-input:not(:placeholder-shown):not(.bad) {
+  transform: scale(1.005, 1.005);
+  border-color: #adecad;
+  box-shadow: #adecad -1px 2px 5px;
 }
 
 .pre-label {
@@ -124,5 +163,15 @@ export default {
 .content {
   overflow: visible;
   position: relative;
+}
+
+.changed-input, .changed-input:not(:placeholder-shown):not(.bad), .changed-input:hover, .changed-input:focus {
+  border-color: #daca60;
+  box-shadow: #daca60 -1px 2px 5px;
+}
+
+.bad {
+  border-color: red;
+  box-shadow: red -1px 2px 5px;
 }
 </style>

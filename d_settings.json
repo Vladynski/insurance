@@ -24,6 +24,12 @@
     "type": "INTEGER"
   },
   {
+    "key": "sendQuestionTimeout",
+    "value": "30",
+    "description": "Минимальное время между отправками вопросов",
+    "type": "INTEGER"
+  },
+  {
     "key": "baseSum",
     "value": "30",
     "description": "Начальная ставка в расчёте страховки (BYN до двух знаков)",

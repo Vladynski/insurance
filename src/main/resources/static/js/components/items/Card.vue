@@ -94,9 +94,11 @@ export default {
   align-items: center;
   background-color: #462446;
   text-align: center;
-  min-height: 50px;
+  /*min-height: 50px;*/
+  height: 30%;
   width: 100%;
-  font-size: 24px;
+  /*font-size: 24px;*/
+  font-size: 2vmin;
   font-weight: bold;
   color: white;
   padding: 2px;

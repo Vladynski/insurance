@@ -99,6 +99,8 @@ export default {
   padding: 5px;
   transition-duration: 300ms;
   border: 2px outset;
+
+  margin: 0 2px 2px 2px;
 }
 
 .info-frame-text {
@@ -110,6 +112,7 @@ export default {
 .info-frame-ok {
   border-color: green;
   background-color: lightgreen;
+  box-shadow: lightgreen -1px 2px 5px;
 }
 
 .info-frame-ok > div:before {
@@ -120,6 +123,7 @@ export default {
 .info-frame-error {
   border-color: red;
   background-color: lightcoral;
+  box-shadow: lightcoral -1px 2px 5px;
 }
 
 .info-frame-error > div:before {
@@ -130,6 +134,7 @@ export default {
 .info-frame-warning {
   border-color: yellow;
   background-color: #ffff7e;
+  box-shadow: #ffff7e -1px 2px 5px;
 }
 
 .info-frame-warning > div:before {
@@ -140,6 +145,7 @@ export default {
 .info-frame-info {
   border-color: cornflowerblue;
   background-color: lightblue;
+  box-shadow: lightblue -1px 2px 5px;
 }
 
 .info-frame-info > div:before {

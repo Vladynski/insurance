@@ -92,12 +92,12 @@ export default {
     editPhone(newVal) {
       const password = prompt('Для выполнения действия необходимо ввести пароль')
       if (password !== null)
-        return this.$api.editInsuranceUserData(clearPhoneNumber(newVal), password)
+        return this.$api.editUserDataDto(password, undefined, clearPhoneNumber(newVal))
     },
     editEmail(newVal) {
       const password = prompt('Для выполнения действия необходимо ввести пароль')
       if (password !== null)
-        return this.$api.editUserDataDto(newVal, password)
+        return this.$api.editUserDataDto(password, newVal)
     },
     createInsuranceData() {
       this.$api.updateInsuranceData(

@@ -1,5 +1,7 @@
 <template>
-  <button :title="title" @click="clickAction" class="btn" :disabled="blocked" :class="this.class + (blocked ? ' btn-disabled '  : '')">
+  <button :title="title" @click="clickAction" class="btn"
+          :disabled="blocked"
+          :class="this.class + (blocked ? ' btn-disabled '  : '')">
     <slot>Button name is not set</slot>
   </button>
 </template>

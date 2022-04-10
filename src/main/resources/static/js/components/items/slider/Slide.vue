@@ -1,17 +1,22 @@
 <template>
-  <div v-if="view" ref="content" class="base-form-data" style="width: 100%; height: 100%; transition-duration: 300ms">
+  <div v-show="view" ref="content" class="base-form-data"
+       :style="['width: 100%; height: 100%; transition-duration: 300ms', noPadding ? 'padding: 0px' : '']">
     <slot></slot>
   </div>
+  <!--  'display:' + view ? 'block' : 'none'-->
 </template>
 
 <script>
 export default {
-  props: ['title', 'pageSliderGetter', 'defView'],
+  props: ['title', 'pageSliderGetter', 'defView', 'noPadding', 'nextAction', 'previewAction', 'init'],
   data() {
     return {
-      view: false,
+      view: this.defView,
+      initAction: this.init,
       simpleNext: false,
-      simplePreview: false
+      simplePreview: false,
+      nextSlide: this.nextAction,
+      previewSlide: this.previewAction
     }
   },
   methods: {
@@ -22,6 +27,10 @@ export default {
       this.pageSliderGetter().setTitle(this.title)
       this.pageSliderGetter().show(() => {
         this.view = true
+        if (this.initAction) {
+          this.initAction()
+          this.initAction = undefined
+        }
       })
     },
     swap() {
@@ -33,9 +42,6 @@ export default {
     getTitle() {
       return this.title;
     }
-  },
-  mounted() {
-    this.view = this.defView
   }
 }
 </script>

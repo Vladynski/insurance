@@ -29,6 +29,8 @@ public class SettingsService {
     private static SettingWrapper mailSendTimeoutSeconds;
     @Getter
     private static SettingWrapper baseSum;
+    @Getter
+    private static SettingWrapper sendQuestionTimeout;
 
 
     private SettingsService(SettingsRepo settingsRepo,
@@ -40,6 +42,7 @@ public class SettingsService {
     }
 
     @Deprecated
+    //FIXME read and parse to util class
     private static void fillingDbIfEmpty() {
         if (settingsRepo.count() == 0) {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -62,6 +65,7 @@ public class SettingsService {
         confirmerLifetimeHours = new SettingWrapper(settingsRepo.findById("confirmerLifetimeHours").get());
         mailSendTimeoutSeconds = new SettingWrapper(settingsRepo.findById("mailSendTimeoutSeconds").get());
         baseSum = new SettingWrapper(settingsRepo.findById("baseSum").get());
+        sendQuestionTimeout = new SettingWrapper(settingsRepo.findById("sendQuestionTimeout").get());
     }
 
     public record SettingWrapper(SettingStructure setting) implements Setting {

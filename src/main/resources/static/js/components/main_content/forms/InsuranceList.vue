@@ -3,7 +3,7 @@
     <div class="base-form-title def-block title-background-container insurance-list-title">
       Список оформленных страховок
     </div>
-    <div class="base-form-data def-block def-block-vertical-scrolling" style="justify-content: flex-start">
+    <div class="base-form-data def-block def-block-vertical-scrolling" style="justify-content: flex-start; padding: 2%">
       <template v-if="insuranceList">
         <template v-if="Array.isArray(insuranceList)">
           <div class="block-column" style="justify-content: center; padding: 5%"
@@ -14,7 +14,7 @@
           </div>
           <template v-else>
             <div class="block-row block-row-right" style="height: 80px; padding: 5px">
-              <RadioButtonGroup title="Сначала" :items="radioButtonGroupData" :selectFirst="true"/>
+              <RadioButtonGroup title="Сначала" :items="radioButtonGroupData" :selectIndex="0"/>
             </div>
             <div class="block-column insurance-card-container" v-if="insuranceList">
               <template v-for="(el, index) in resultList" :key="el.id">
@@ -35,7 +35,7 @@
   </div>
 </template>
 <script>
-import InsuranceCard from "./InsuranceCard.vue";
+import InsuranceCard from "./cards/InsuranceCard.vue";
 import InfoFrame from "../../items/InfoFrame.vue";
 import Checkbox from "../../items/Checkbox.vue";
 import RadioButtonGroup from "../../items/RadioButtonGroup.vue";
@@ -50,13 +50,13 @@ export default {
       radioButtonGroupData: [
         {
           name: 'активные',
-          action: () => {
+          select: () => {
             this.sortListByInsuranceStatus()
           }
         },
         {
           name: 'новые',
-          action: () => {
+          select: () => {
             this.sortListByDate();
           }
         }

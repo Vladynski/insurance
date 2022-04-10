@@ -1,9 +1,8 @@
 <template>
   <div ref="container" class="custom-select" style="width:100%"
        :class="[selected ? '' : 'without-select']">
-    <div ref="selectBlock" @click="clickSelect" class="select-selected">{{
-        selected ? getTitle(selected) : title
-      }}
+    <div ref="selectBlock" @click="clickSelect" class="select-selected">
+      {{ selected ? getTitle(selected) : title }}
     </div>
     <div v-if="showElements" ref="selectVariants" class="select-items">
       <div v-for="item in items" @click="selectItem(item)">{{ getTitle(item) }}</div>
@@ -85,6 +84,10 @@ export default {
   font-size: 20px;
   border-top: 2px solid transparent;
   transition-duration: 300ms;
+}
+
+.custom-select:hover {
+  box-shadow: DodgerBlue -1px 2px 5px;
 }
 
 .select-selected {

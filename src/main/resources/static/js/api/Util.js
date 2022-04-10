@@ -20,15 +20,40 @@ export function checkPhoneInputUpdate(event) {
 }
 
 export function getFormatPhoneNumber(phoneNumber) {
+    if (!phoneNumber)
+        return '+375 '
     return '+' + phoneNumber.substring(0, 3) + ' ' + phoneNumber.substring(3, 5) + ' ' + phoneNumber.substring(5, 8) + '-' + phoneNumber.substring(8, 10) + '-' + phoneNumber.substring(10, 12)
 }
 
-export function clearPhoneNumber(phoneNumber) {
-    return phoneNumber.replaceAll(/\D/g, '')
+export function removeSpaces(text) {
+    return text.replace(/\s/g, '')
 }
 
-export function div(dividend, divider){
+export function clearPhoneNumber(phoneNumber) {
+    if (phoneNumber)
+        return phoneNumber.replace(/\D/g, '')
+    else
+        return undefined
+}
+
+export function clearRegistrationNumber(registrationNumber) {
+    return saveOnlyNumsAndUpperLetters(registrationNumber)
+}
+
+export function clearWinNumber(winNumber) {
+    return saveOnlyNumsAndUpperLetters(winNumber)
+}
+
+function saveOnlyNumsAndUpperLetters(text) {
+    return text.toUpperCase().replace(/[^0-9A-Z]/g, '')
+}
+
+export function div(dividend, divider) {
     return Math.floor(dividend / divider)
+}
+
+export function randomId() {
+    return Math.floor(Math.random() * 1000)
 }
 
 // export function encodeImageFileAsURL(element, callback) {
