@@ -1,8 +1,13 @@
 <template>
   <div class="sliding-block block-column">
-    <button class="sliding-block-title unselectable" @click="clickAction">
-      {{ title }}
-    </button>
+    <a class="block-row sliding-block-title unselectable" @click="clickAction">
+      <div>
+        {{ title }}
+      </div>
+      <div>
+        {{ infoText }}
+      </div>
+    </a>
     <div :class="['sliding-block-body', openBody ? 'sliding-block-open-body': '']">
       <div class="block-column">
         <slot></slot>
@@ -16,10 +21,14 @@ export default {
   props: ['title'],
   data() {
     return {
-      openBody: false
+      openBody: false,
+      infoText: ''
     }
   },
   methods: {
+    setInfoText(text) {
+      this.infoText = text
+    },
     clickAction() {
       this.openBody = !this.openBody
     }

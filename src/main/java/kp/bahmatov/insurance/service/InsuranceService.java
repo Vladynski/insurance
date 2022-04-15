@@ -1,22 +1,26 @@
 package kp.bahmatov.insurance.service;
 
+import kp.bahmatov.insurance.domain.dto.filter.InsuranceFilterDto;
 import kp.bahmatov.insurance.domain.dto.insurance.InsuranceInDto;
 import kp.bahmatov.insurance.domain.structure.insurance.Insurance;
 import kp.bahmatov.insurance.domain.structure.insurance.InsuranceStatus;
 import kp.bahmatov.insurance.domain.structure.insurance.Payment;
 import kp.bahmatov.insurance.domain.structure.insurance.selection.SelectionVariant;
 import kp.bahmatov.insurance.exceptions.BadRequestException;
+import kp.bahmatov.insurance.repo.InsuranceDataRepo;
 import kp.bahmatov.insurance.repo.InsuranceRepo;
+import kp.bahmatov.insurance.repo.UserRepo;
+import kp.bahmatov.insurance.repo.specification.SpecificationBuilder;
+import kp.bahmatov.insurance.repo.specification.StructureSpecification;
+import kp.bahmatov.insurance.repo.specification.reflection.SpecificBuilderByDto;
 import kp.bahmatov.insurance.service.interfaces.Auth;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class InsuranceService {
@@ -24,15 +28,21 @@ public class InsuranceService {
     private final InsuranceRepo insuranceRepo;
     private final SelectionService selectionService;
     private final PaymentService paymentService;
+    private final InsuranceDataRepo insuranceDataRepo;
+    private final UserRepo userRepo;
 
     public InsuranceService(Auth auth,
                             InsuranceRepo insuranceRepo,
                             SelectionService selectionService,
-                            PaymentService paymentService) {
+                            PaymentService paymentService,
+                            InsuranceDataRepo insuranceDataRepo,
+                            UserRepo userRepo) {
         this.auth = auth;
         this.insuranceRepo = insuranceRepo;
         this.selectionService = selectionService;
         this.paymentService = paymentService;
+        this.insuranceDataRepo = insuranceDataRepo;
+        this.userRepo = userRepo;
     }
 
 
@@ -65,7 +75,7 @@ public class InsuranceService {
         Insurance foundInsurance = insuranceRepo.findInsuranceByWinNumber(insuranceDto.getWinNumber()).orElse(null);
         if (foundInsurance != null &&
                 (foundInsurance.getStatus() == InsuranceStatus.VALID ||
-                foundInsurance.getStatus() == InsuranceStatus.AWAITING_PAYMENT))
+                        foundInsurance.getStatus() == InsuranceStatus.AWAITING_PAYMENT))
             throw new BadRequestException("Страховка на это транспортное средство уже оформлена и действует, или ожидает оплаты.");
     }
 
@@ -96,5 +106,33 @@ public class InsuranceService {
 
     public List<Insurance> getAllMy() {
         return insuranceRepo.findAllByCreator(auth.getUser().getInsuranceData());
+    }
+
+    public List<Insurance> filter(InsuranceFilterDto filterDto) {
+        if (filterDto.getId() != null)
+            return insuranceRepo.findById(filterDto.getId()).map(List::of).orElse(Collections.emptyList());
+
+        SpecificationBuilder<Insurance> builder = new SpecificationBuilder<>(StructureSpecification::new);
+        SpecificBuilderByDto.fillingBuilder(builder, filterDto);
+
+        if (filterDto.getUserId() != null) {
+            userRepo.findById(filterDto.getUserId())
+                    .ifPresent(user -> builder.with("creator", user.getInsuranceData().getId()));
+        }
+
+        if (filterDto.getPassportId() != null) {
+            insuranceDataRepo.findByPassportId(filterDto.getPassportId())
+                    .ifPresent(insuranceData -> builder.with("creator", insuranceData.getId()));
+        }
+
+        if (filterDto.getPhone() != null) {
+            insuranceDataRepo.findByPhone(filterDto.getPhone())
+                    .ifPresent(insuranceData -> builder.with("creator", insuranceData.getId()));
+        }
+
+
+        Specification<Insurance> specification = builder.build();
+
+        return insuranceRepo.findAll(specification);
     }
 }

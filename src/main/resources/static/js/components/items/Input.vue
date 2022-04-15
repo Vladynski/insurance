@@ -4,7 +4,7 @@
            :class="['pre-label', badText ? 'bad-label' : '']" ref="label"
            :title="badText">{{ badText ? badText : placeholderText }}</label>
     <input ref="inputField" @input="update" @keydown="keydown" :disabled="!canEdit"
-           :class="['custom-input', inputClass, badText ? 'bad' : '', changed ? 'changed-input' : '']"
+           :class="[ lightDisable ? 'custom-light-input' : 'custom-input', inputClass, badText ? 'bad' : '', changed ? 'changed-input' : '']"
            :type="type ? type : 'text'"
            class="input"
            :placeholder="placeholderText"
@@ -21,7 +21,8 @@ export default {
   props: [
     'placeholder', 'type', 'obligatory', 'inputClass',
     'labelColor', 'value', 'keydown', 'maxlength',
-    'editable', 'changeListener', 'updateStartValueListener'
+    'editable', 'changeListener', 'updateStartValueListener',
+    'lightDisable'
   ],
   data() {
     return {
@@ -113,8 +114,20 @@ export default {
 </script>
 
 <style>
-.custom-input:disabled, .custom-input:disabled:not(:placeholder-shown):not(.bad), .custom-input:disabled:hover, .custom-input:disabled:focus {
-  background: #eaeaea;
+.custom-light-input:disabled,
+.custom-light-input:disabled:not(:placeholder-shown):not(.bad),
+.custom-light-input:disabled:hover,
+.custom-light-input:disabled:focus {
+  background-color: white;
+  cursor: default;
+  color: black
+}
+
+.custom-input:disabled,
+.custom-input:disabled:not(:placeholder-shown):not(.bad),
+.custom-input:disabled:hover,
+.custom-input:disabled:focus {
+  background-color: #eaeaea;
   cursor: default;
 }
 
@@ -130,7 +143,8 @@ export default {
   box-shadow: #adecad -1px 2px 5px;
 }
 
-.custom-input:focus, .custom-input:not(:placeholder-shown):not(.bad) {
+.custom-input:focus,
+.custom-input:not(:placeholder-shown):not(.bad) {
   transform: scale(1.005, 1.005);
   border-color: #adecad;
   box-shadow: #adecad -1px 2px 5px;
@@ -165,7 +179,10 @@ export default {
   position: relative;
 }
 
-.changed-input, .changed-input:not(:placeholder-shown):not(.bad), .changed-input:hover, .changed-input:focus {
+.changed-input,
+.changed-input:not(:placeholder-shown):not(.bad),
+.changed-input:hover,
+.changed-input:focus {
   border-color: #daca60;
   box-shadow: #daca60 -1px 2px 5px;
 }

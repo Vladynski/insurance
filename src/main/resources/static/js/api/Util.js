@@ -19,6 +19,11 @@ export function checkPhoneInputUpdate(event) {
     return resultPhone
 }
 
+export function checkNumbersInputUpdate(event) {
+    if ('1234567890'.indexOf(event.key) === -1 && event.key !== 'Backspace')
+        event.preventDefault()
+}
+
 export function getFormatPhoneNumber(phoneNumber) {
     if (!phoneNumber)
         return '+375 '

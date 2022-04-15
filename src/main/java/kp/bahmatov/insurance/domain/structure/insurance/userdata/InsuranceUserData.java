@@ -20,8 +20,9 @@ public class InsuranceUserData {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
+    @Column(unique = true, length = 12)
     private String phone;
-    @Column(unique = true)
+    @Column(unique = true, length = 14)
     private String passportId;
     @OneToOne(cascade = CascadeType.ALL)
     private Content photo;

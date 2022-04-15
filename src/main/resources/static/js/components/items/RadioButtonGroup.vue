@@ -28,13 +28,13 @@ export default {
       id: 0,
       fid: randomId(),
       disabled: this.editable !== undefined && !this.editable,
-      selected: this.selectIndex ? this.items[this.selectIndex] : undefined,
+      selected: undefined,
       startValue: this.changeListener ? this.items[this.selectIndex] : undefined,
       changed: false
     }
   },
   methods: {
-    updateStartValue(){
+    updateStartValue() {
       this.startValue = this.selected
       this.changed = false
     },
@@ -53,6 +53,7 @@ export default {
         item.select = () => {
         }
     })
+    this.selected = this.items[this.selectIndex]
   }
 }
 </script>

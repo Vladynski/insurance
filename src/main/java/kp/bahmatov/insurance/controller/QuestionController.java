@@ -1,6 +1,7 @@
 package kp.bahmatov.insurance.controller;
 
 import kp.bahmatov.insurance.domain.dto.QuestionInDto;
+import kp.bahmatov.insurance.domain.dto.QuestionOutDto;
 import kp.bahmatov.insurance.domain.structure.User;
 import kp.bahmatov.insurance.exceptions.SendRequestTimeoutException;
 import kp.bahmatov.insurance.service.QuestionService;
@@ -10,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,21 +30,31 @@ public class QuestionController {
         this.auth = auth;
     }
 
-    //FIXME
     @GetMapping
-    public void getAll() {
-        questionService.getAll();
+    public List<QuestionOutDto> getAllForUser() {
+        return questionService.getAllForUser().stream().map(QuestionOutDto::new).toList();
+    }
+
+    //FIXME only admin
+    @GetMapping("/admin")
+    public List<QuestionOutDto> getAll() {
+        return questionService.getAllWithoutAnswer().stream().map(QuestionOutDto::new).toList();
+    }
+
+    @PutMapping
+    public void addAnswer(@PathParam("id") long id, @PathParam("answer") String answer) {
+        questionService.setAnswer(id, answer);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void addQuestion(@Valid @RequestBody QuestionInDto questionDto) {
+    public long addQuestion(@Valid @RequestBody QuestionInDto questionDto) {
         User author = auth.getUser();
         Long lastActivity = senders.get(author.getId());
         if (lastActivity == null ||
                 lastActivity + sendTimeout < System.currentTimeMillis()) {
-            questionService.addQuestion(author, questionDto);
             senders.put(author.getId(), System.currentTimeMillis());
+            return questionService.addQuestion(author, questionDto);
         } else {
             throw new SendRequestTimeoutException(String.format("Вопросы можно задавать раз в %d минут", SettingsService.getSendQuestionTimeout().getIntValue()));
         }

@@ -5,6 +5,7 @@ import kp.bahmatov.insurance.service.FaqService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -21,9 +22,19 @@ public class FaqController {
         return faqService.getAll().stream().map(FaqDto::new).toList();
     }
 
+    @PutMapping
+    public int updateFaq(@Valid @RequestBody FaqDto faqDto) {
+        return faqService.update(faqDto);
+    }
+
+    @DeleteMapping
+    public void deleteFaq(@PathParam("id") int id) {
+        faqService.delete(id);
+    }
+
     //FIXME only for admins
     @PostMapping
-    public void addFaq(@Valid @RequestBody FaqDto faqDto) {
-        faqService.addFaq(faqDto);
+    public int addFaq(@Valid @RequestBody FaqDto faqDto) {
+        return faqService.add(faqDto);
     }
 }

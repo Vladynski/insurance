@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface InsuranceDataRepo extends JpaRepository<InsuranceUserData, Integer> {
     Optional<InsuranceUserData> findByPassportId(String passportId);
+
+    Optional<InsuranceUserData> findByPhone(String phone);
 }

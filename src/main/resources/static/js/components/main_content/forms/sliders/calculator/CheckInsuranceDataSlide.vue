@@ -6,13 +6,13 @@
           <div style="width: 100%">
             <Table :title="title" :data="getData()" :small="true"/>
           </div>
-          <Input ref="firstName" inputClass="d-input-size" placeholder="Имя собственника" :editable="false"/>
-          <Input ref="secondName" inputClass="d-input-size" placeholder="Фамилия собственника" :editable="false"/>
-          <Input ref="patronymic" inputClass="d-input-size" placeholder="Отчество собственника" :editable="false"/>
+          <Input ref="firstName" lightDisable="true" inputClass="d-input-size" placeholder="Имя собственника" :editable="false"/>
+          <Input ref="secondName" lightDisable="true" inputClass="d-input-size" placeholder="Фамилия собственника" :editable="false"/>
+          <Input ref="patronymic" lightDisable="true" inputClass="d-input-size" placeholder="Отчество собственника" :editable="false"/>
           <Checkbox :editable="false" :defSelected="this.createInsuranceData.ownerItsMe">Собственником являюсь я
           </Checkbox>
-          <Input ref="win" inputClass="d-input-size" placeholder="Идентификационный номер ТС (WIN)" :editable="false"/>
-          <Input ref="registrationNumber" inputClass="d-input-size" placeholder="Регистрационный знак"
+          <Input ref="win" lightDisable="true" inputClass="d-input-size" placeholder="Идентификационный номер ТС (WIN)" :editable="false"/>
+          <Input ref="registrationNumber" lightDisable="true" inputClass="d-input-size" placeholder="Регистрационный знак"
                  :editable="false"/>
         </div>
       </div>

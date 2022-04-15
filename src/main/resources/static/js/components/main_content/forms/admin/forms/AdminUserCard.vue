@@ -20,7 +20,7 @@
                    type="email"
                    placeholder="Email"
                    labelColor="#444444"
-                   value="userdata.email"
+                   :value="userdata.email"
                    :changeListener="true"/>
             <Input labelColor="#444444" :editable="false" placeholder="Дата регистрации"
                    :value="userdata.registration_date"/>
@@ -43,13 +43,8 @@
                    :value="userdata.insurance.passport_id"
                    :editable="hasInsuranceData"
                    maxlength="19" :changeListener="true"/>
-            <RadioButtonGroup ref="insuranceDataRbg"
-                              :small="true"
-                              title="Страховые данные"
-                              :editable="hasInsuranceData"
-                              :items="insuranceDataStatus"
-                              :selectIndex="insuranceDataStatus.find(item => item.status === userdata.insurance.status).index"
-                              :changeListener="true"/>
+            <InsuranceDataStatus ref="insuranceDataRbg" :hasInsuranceData="hasInsuranceData"
+                                 :insuranceStatus="userdata.insurance.status"/>
           </div>
           <hr class="v-separator">
           <div class="block-column center admin-user-card-data">
@@ -103,10 +98,11 @@ import {checkPhoneInputUpdate, getFormatPhoneNumber} from "../../../../../api/Ut
 import Button from "../../../../items/Button.vue";
 import Slide from "../../../../items/slider/Slide.vue";
 import PageSlider from "../../../../items/slider/PageSlider.vue";
-import SendMailForm from "../../SendMailForm.vue";
+import SendMailForm from "./SendMailForm.vue";
+import InsuranceDataStatus from "./InsuranceDataStatus.vue";
 
 export default {
-  components: {SendMailForm, PageSlider, Slide, Button, Checkbox, Input, RadioButtonGroup},
+  components: {SendMailForm, PageSlider, Slide, Button, Checkbox, Input, RadioButtonGroup, InsuranceDataStatus},
   props: ['userdata'],
   data() {
     return {
@@ -122,32 +118,6 @@ export default {
         {
           name: 'USER',
           isAdmin: false
-        }
-      ],
-      insuranceDataStatus: [
-        {
-          name: '❌',
-          status: 'NONE',
-          title: 'Нет данных',
-          index: 0
-        },
-        {
-          name: '✔️',
-          status: 'CONFIRMED',
-          title: 'Подтвердить',
-          index: 1
-        },
-        {
-          name: '⌛',
-          status: 'WAIT_CONFIRMATION',
-          title: 'Ожидает проверки',
-          index: 2
-        },
-        {
-          name: '🚫',
-          status: 'DENIED',
-          title: 'Отклонить',
-          index: 3
         }
       ]
     }
@@ -217,9 +187,10 @@ export default {
 
 <style scoped>
 .admin-user-card {
-  background-color: white;
+  background-color: #47D2E9;
   border-radius: 5px;
   height: auto;
+  box-shadow: -1px 2px 5px #444444;
 }
 
 .admin-user-card-title {

@@ -3,9 +3,18 @@
     <div class="base-form-title def-block title-background-container admin-panel-title-background">
       Панель администрирования
     </div>
-    <RadioButtonGroup title="Раздел" :items="items" :selectIndex="0" style="margin-bottom: 5px"/>
-    <div class="base-form-data def-block">
-      <AdminUsers v-if="adminUsers"/>
+    <RadioButtonGroup :small="true" title="Раздел" :items="items" :selectIndex="0" style="margin-bottom: 5px"/>
+    <div v-show="adminUsers" class="base-form-data def-block">
+      <AdminUsers/>
+    </div>
+    <div v-show="insuranceList" class="base-form-data def-block">
+      <InsuranceAdminList/>
+    </div>
+    <div v-show="faqEditor" class="base-form-data def-block">
+      <FaqEditor/>
+    </div>
+    <div v-show="userQuestions" class="base-form-data def-block">
+      <UserQuestions/>
     </div>
   </div>
 </template>
@@ -13,29 +22,74 @@
 <script>
 import RadioButtonGroup from "../../items/RadioButtonGroup.vue";
 import AdminUsers from "./admin/AdminUsers.vue";
+import InsuranceAdminList from "./admin/InsuranceAdminList.vue";
+import FaqEditor from "./admin/FaqEditor.vue";
+import UserQuestions from "./admin/UserQuestions.vue";
 
 export default {
-  components: {RadioButtonGroup, AdminUsers},
+  components: {UserQuestions, FaqEditor: FaqEditor, RadioButtonGroup, AdminUsers, InsuranceAdminList},
   data() {
     return {
-      adminUsers: true,
+      adminUsers: false,
+      insuranceList: false,
+      faqEditor: false,
+      userQuestions: true,
+      selections: true,
+      settings: true,
       items: [
         {
           name: 'Пользователи',
           select: () => {
+            this.unselectAll()
+            this.adminUsers = true
           }
         },
         {
-          name: '54321',
+          name: 'Страховки',
           select: () => {
+            this.unselectAll()
+            this.insuranceList = true
           }
         },
         {
-          name: '67890',
+          name: 'FAQ',
           select: () => {
+            this.unselectAll()
+            this.faqEditor = true
+          }
+        },
+        {
+          name: 'Вопросы пользователей',
+          select: () => {
+            this.unselectAll()
+            this.userQuestions = true
+          }
+        },
+        {
+          name: 'Подбор',
+          select: () => {
+            this.unselectAll()
+            this.selections = true
+          }
+        },
+        {
+          name: 'Настройки',
+          select: () => {
+            this.unselectAll()
+            this.settings = true
           }
         },
       ]
+    }
+  },
+  methods: {
+    unselectAll() {
+      this.adminUsers = false
+      this.insuranceList = false
+      this.faqEditor = false
+      this.userQuestions = false
+      this.selections = false
+      this.settings = false
     }
   }
 }

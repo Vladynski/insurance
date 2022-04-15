@@ -6,7 +6,7 @@
               style="left: 0; transform: scale(-1,1) translate(-50%, -50%)"
               class="btn green-btn navigate-btn">➜
       </Button>
-      <div ref="title" style="transition-duration: 300ms"></div>
+      <div ref="title" :style="['transition-duration: 300ms', 'opacity: ' + opacity]"></div>
       <Button ref="nextBtn" v-if="visibleNextButton" :click="nextSlide" title="Вперёд"
               style="right: 0;"
               class="btn green-btn navigate-btn">➜
@@ -23,7 +23,7 @@
       </Button>
     </div>
     <hr v-if="!hideTitle" class="separator">
-    <div ref="content" class="block-column">
+    <div ref="content" class="block-column" :style="'opacity: ' + opacity">
       <slot ref="slide"></slot>
     </div>
   </div>
@@ -40,22 +40,24 @@ export default {
       currentSlide: -1,
       slides: undefined,
       visibleNextButton: false,
-      visiblePreviewButton: false
+      visiblePreviewButton: false,
+      opacity: 1,
+      titleOpacity: 1
     }
   },
   methods: {
     hide(comp) {
-      this.$refs.content.style.opacity = "0"
+      this.opacity = 0
       if (!this.hideTitle)
-        this.$refs.title.style.opacity = "0"
+        this.titleOpacity = 0
       setTimeout(comp, 300)
     },
     show(comp) {
       comp()
       setTimeout(() => {
-        this.$refs.content.style.opacity = "1"
+        this.opacity = 1
         if (!this.hideTitle)
-          this.$refs.title.style.opacity = "1"
+          this.titleOpacity = 1
       }, 300)
     },
     setTitle(titleText) {

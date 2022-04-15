@@ -5,25 +5,29 @@
     </div>
     <div class="description">
       <div style="width: 100%; height: 100%; padding:10px">
-        <slot></slot>
+        <slot>Описания не будет.</slot>
       </div>
     </div>
     <div style="position: relative; width: 100%; height: 100%;">
       <button class="clear-btn" @click="clear"><span class="clear-btn-img"></span></button>
       <textarea ref="textArea"
                 @input="update"
-                maxlength="512"
+                v-model="text"
+                :maxlength="maxlength ? maxlength : 512"
                 class="text-area" :placeholder="placeholder"></textarea>
     </div>
   </div>
 </template>
 
 <script>
+import {removeSpaces} from "../../api/Util.js";
+
 export default {
-  props: ['title', 'placeholder'],
+  props: ['title', 'placeholder', 'value', 'maxlength'],
   data() {
     return {
-      bad: false
+      bad: false,
+      text: this.value
     }
   },
   methods: {
@@ -37,7 +41,7 @@ export default {
       this.$refs.textArea.value = ''
     },
     test() {
-      if (this.$refs.textArea.value.replaceAll(/\s/g, '').length === 0) {
+      if (removeSpaces(this.text).length === 0) {
         this.bad = true
         return false
       }
@@ -76,10 +80,12 @@ export default {
 }
 
 .text-area {
+  position: absolute;
+  left: 0;
+  top: 0;
   font-size: 18px;
   padding: 10px;
   width: 100%;
-  /*height: calc(100% - 42px);*/
   height: 100%;
   max-width: 100%;
   max-height: 100%;

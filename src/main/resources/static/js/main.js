@@ -10,6 +10,6 @@ axios.defaults.headers.common['Accept'] = 'application/json'
 let app = Vue.createApp(App);
 app.config.globalProperties.$axios = axios;
 // app.config.globalProperties.$app = app;
-app.config.globalProperties.$api = createApi(axios);
+app.config.globalProperties.$api = createApi(axios).initSelectionData();
 app.config.globalProperties.$adminApi = createAdminApi(axios);
 app.mount('#app')

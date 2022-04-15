@@ -1,5 +1,5 @@
 <template>
-  <div class="block-column insurance-data-form" style="height: 250px">
+  <div class="block-column insurance-data-form">
     <div class="block-row header">
       <div class="block-row header-content">
         <div class="header-text header-key">
@@ -18,19 +18,22 @@
         </div>
       </div>
     </div>
-    <div class="block-row insurance-data-body-container">
-      <div class="block-column insurance-data-body">
-        <InsuranceDataKeyValue name="Фамилия собственника">{{ ownerSecondName }}</InsuranceDataKeyValue>
-        <InsuranceDataKeyValue name="Имя собственника">{{ ownerFirstName }}</InsuranceDataKeyValue>
-        <InsuranceDataKeyValue name="Отчество собственника">{{ ownerPatronymic }}</InsuranceDataKeyValue>
-        <InsuranceDataKeyValue name="Статус страховки">{{ insuranceStatus }}</InsuranceDataKeyValue>
+    <div class="block-column insurance-data-body-container">
+      <div class="block-row block-row-items-margin">
+        <div class="block-column insurance-data-body">
+          <InsuranceDataKeyValue name="Фамилия собственника">{{ ownerSecondName }}</InsuranceDataKeyValue>
+          <InsuranceDataKeyValue name="Имя собственника">{{ ownerFirstName }}</InsuranceDataKeyValue>
+          <InsuranceDataKeyValue name="Отчество собственника">{{ ownerPatronymic }}</InsuranceDataKeyValue>
+          <InsuranceDataKeyValue name="Статус страховки">{{ insuranceStatus }}</InsuranceDataKeyValue>
+        </div>
+        <div class="block-column insurance-data-body">
+          <InsuranceDataKeyValue name="Статус оплаты">{{ paymentStatus }}</InsuranceDataKeyValue>
+          <InsuranceDataKeyValue name="Внесено денег">{{ paid }} BYN</InsuranceDataKeyValue>
+          <InsuranceDataKeyValue name="Крайний срок оплаты">{{ paymentDeadline }}</InsuranceDataKeyValue>
+          <InsuranceDataKeyValue v-if="timer" name="Осталось времени">{{ leftTime }}</InsuranceDataKeyValue>
+        </div>
       </div>
-      <div class="block-column insurance-data-body">
-        <InsuranceDataKeyValue name="Статус оплаты">{{ paymentStatus }}</InsuranceDataKeyValue>
-        <InsuranceDataKeyValue name="Внесено денег">{{ paid }} BYN</InsuranceDataKeyValue>
-        <InsuranceDataKeyValue name="Крайний срок оплаты">{{ paymentDeadline }}</InsuranceDataKeyValue>
-        <InsuranceDataKeyValue v-if="timer" name="Осталось времени">{{ leftTime }}</InsuranceDataKeyValue>
-      </div>
+      <RowList :items="variantNames"/>
     </div>
     <div class="block-row header">
       <div class="block-row header-content">
@@ -56,9 +59,10 @@
 <script>
 import InsuranceDataKeyValue from "./InsuranceDataNameValue.vue";
 import {div} from '../../../../api/Util.js'
+import RowList from "../../../items/RowList.vue";
 
 export default {
-  components: {InsuranceDataKeyValue},
+  components: {RowList, InsuranceDataKeyValue},
   props: ["insurance"],
   data() {
     return {
@@ -73,7 +77,8 @@ export default {
       endTime: this.insurance.end_time,
       timer: undefined,
       secondsLeft: undefined,
-      leftTime: undefined
+      leftTime: undefined,
+      variantNames: undefined
     }
   },
   methods: {
@@ -112,6 +117,9 @@ export default {
       }
     }
   },
+  beforeMount() {
+    this.variantNames = this.$api.getSelectionNamesByIds(this.insurance.variants)
+  },
   mounted() {
     this.secondsLeft = new Date(this.insurance.payment.deadline).getTime() - new Date().getTime()
     if (this.secondsLeft > 0) {
@@ -130,11 +138,10 @@ export default {
 <style scoped>
 .insurance-data-form {
   border: 5px solid #ffffff;
-  /*background: white;*/
+  height: auto;
   background: linear-gradient(#462446, #723d66, #643564, #754269);
   font-size: 20px;
   font-weight: normal;
-  max-height: 250px;
   border-radius: 5px;
   box-shadow: #888888 -1px 2px 5px;
 }
@@ -144,6 +151,7 @@ export default {
 }
 
 .header {
+  height: 40px;
   max-height: 40px;
 }
 
@@ -154,14 +162,13 @@ export default {
 }
 
 .insurance-data-body {
-  padding-left: 10px;
-  padding-right: 10px;
   justify-content: flex-start;
   background-color: transparent;
 }
 
 .insurance-data-body-container {
   background: linear-gradient(45grad, #ffdeff, #dac9ff);
+  padding: 5px 15px;
 }
 
 .header-text {

@@ -1,16 +1,23 @@
 <template>
   <div class="find-user-form block-column">
-    <Input ref="firstName" inputClass="d-input-size" placeholder="По имени"/>
-    <Input ref="secondName" inputClass="d-input-size" placeholder="По фамилии"/>
-    <Input ref="patronymic" inputClass="d-input-size" placeholder="По отчеству"/>
-    <Input ref="email" inputClass="d-input-size" placeholder="По Email'у"/>
-    <Input ref="passportId" inputClass="d-input-size" placeholder="По ID паспорта (полному)"/>
-    <Input ref="userId" inputClass="d-input-size" placeholder="По id"/>
-    <Input ref="insuranceDataId" inputClass="d-input-size" placeholder="По id страховых данных"/>
+    <div class="block-row block-row-items-margin">
+      <Input ref="secondName" inputClass="d-input-size" placeholder="По фамилии"/>
+      <Input ref="firstName" inputClass="d-input-size" placeholder="По имени"/>
+      <Input ref="patronymic" inputClass="d-input-size" placeholder="По отчеству"/>
+    </div>
+    <div class="block-row block-row-items-margin">
+      <Input ref="email" inputClass="d-input-size" placeholder="По Email'у"/>
+      <Input ref="phone" inputClass="d-input-size" placeholder="По номеру телефона"/>
+    </div>
+    <div class="block-row block-row-items-margin">
+      <Input ref="userId" inputClass="d-input-size" placeholder="По id"/>
+      <Input ref="passportId" inputClass="d-input-size" placeholder="По ID паспорта (полному)"/>
+      <Input ref="insuranceDataId" inputClass="d-input-size" placeholder="По id страховых данных"/>
+    </div>
     <Checkbox ref="isAdmin">Только администраторы</Checkbox>
     <div class="block-row block-row-items-margin">
       <Button :click="find" class="btn green-btn d-btn-max-size">Найти</Button>
-      <Button :click="clear" class="btn blue-btn d-btn-max-size" >Очистить</Button>
+      <Button :click="clear" class="btn blue-btn d-btn-max-size">Очистить</Button>
     </div>
   </div>
 </template>
@@ -22,31 +29,32 @@ import Button from "../../../../items/Button.vue";
 
 export default {
   components: {Button, Checkbox, Input},
-  props: ['updateList'],
+  props: ['updateList', 'setInfoText'],
   data() {
     return {
       inputList: undefined
     }
   },
   methods: {
-    clear(){
+    clear() {
       this.inputList.forEach(el => el.setText(''))
       this.$refs.isAdmin.selected = false
     },
     find() {
       if (this.test()) {
         this.$adminApi.userFilter(
+            this.$refs.userId.getTextU(),
             this.$refs.firstName.getTextU(),
             this.$refs.secondName.getTextU(),
             this.$refs.patronymic.getTextU(),
             this.$refs.email.getTextU(),
             this.$refs.passportId.getTextU(),
-            this.$refs.userId.getTextU(),
             this.$refs.insuranceDataId.getTextU(),
             this.$refs.isAdmin.selected
         ).then(
             (ok) => {
               this.updateList(ok.data);
+              this.setInfoText('Найдено элементов: ' + ok.data.length)
             }
         )
       }
@@ -56,7 +64,7 @@ export default {
       this.inputList.forEach(el => result = result || el.silentTest())
 
       if (!result)
-        this.inputList[0].setBadText('Должно быть заполнено хотя бы одно поле')
+        this.setInfoText('Должно быть заполнено хотя бы одно поле')
 
       return result
     }

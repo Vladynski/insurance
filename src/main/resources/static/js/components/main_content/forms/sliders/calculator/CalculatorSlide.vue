@@ -15,7 +15,7 @@
     <InfoFrame v-if="!hasInsuranceData" ref="infoFrame"></InfoFrame>
     <div v-else class="block-row block-row-right"
          :style="['height: 45px; margin-top: 15px', hasSelected ? 'opacity: 1' : 'opacity: 0']">
-<!--      FIXME-->
+      <!--      FIXME-->
       <Checkbox ref="acceptCheckBox">ыы <a href="#">tochno ыы</a>
       </Checkbox>
       <Button :click="updateInsuranceData" ref="nextButton" startBlock="true"
@@ -91,16 +91,17 @@ export default {
   },
   mounted() {
     this.userdata = this.outUserdata
-    this.$api.getSelectionData().then(
-        (ok) => {
-          this.group.setLimit(ok.data.selections.length)
-          this.selectionData = ok.data.selections
-          baseSum = ok.data.base_sum
-        }, (err) => {
-          this.$refs.baseSumInfoFrame.setDefaultText('Не удалось получить данные о стоимости услуг. Пожалуйста, обратитесь в поддержку в разделе "Задать вопрос"')
-          this.$refs.baseSumInfoFrame.setConstant(true, 'error')
-        }
-    )
+    const selectionData = this.$api.getSelectionData()
+
+    if (selectionData) {
+      this.group.setLimit(selectionData.selections.length)
+      this.selectionData = selectionData.selections
+      baseSum = selectionData.base_sum
+    } else {
+      this.$refs.baseSumInfoFrame.setDefaultText('Не удалось получить данные о стоимости услуг. Пожалуйста, обратитесь в поддержку в разделе "Задать вопрос"')
+      this.$refs.baseSumInfoFrame.setConstant(true, 'error')
+    }
+
     if (this.userdata.insurance.status === 'NONE') {
       this.hasInsuranceData = false
       this.$refs.infoFrame.setDefaultText('Для оформления страховки необходимо перейти на вкладку Профиль и заполнить данные в форме Страховая информация')

@@ -5,7 +5,6 @@
 
 <script>
 import Input from '../items/Input.vue'
-import {Base64} from "js-base64";
 
 export default {
   props: ['swap', 'block', 'unblock', 'infoForm', 'authorized'],
@@ -22,11 +21,7 @@ export default {
         this.block()
         this.username = this.$refs.username.getText()
         this.password = this.$refs.password.getText()
-        this.$api.getSelfData({
-          headers: {
-            'Authorization': this.$api.base64Auth(this.username, this.password)
-          }
-        })
+        this.$api.getSelfData(this.username, this.password)
             .then(
                 (ok) => {
                   this.authorized()

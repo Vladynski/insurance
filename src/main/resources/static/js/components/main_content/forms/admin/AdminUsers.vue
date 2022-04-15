@@ -1,13 +1,9 @@
 <template>
   <div class="block-column" style="justify-content: flex-start; padding: 15px">
-    <SlidingBlock ref="findUsersSB" title="Найти пользователей">
-      <FindUserForm :updateList="updateList"/>
+    <SlidingBlock ref="findUsersSB" title="Поиск пользователей">
+      <FindUserForm :updateList="updateList" :setInfoText="setInfoText"/>
     </SlidingBlock>
     <div class="block-column def-block-vertical-scrolling block-items-margin user-data-list">
-      <AdminUserCard v-for="user in userList" :key="user.id" :userdata="user"/>
-      <AdminUserCard v-for="user in userList" :key="user.id" :userdata="user"/>
-      <AdminUserCard v-for="user in userList" :key="user.id" :userdata="user"/>
-      <AdminUserCard v-for="user in userList" :key="user.id" :userdata="user"/>
       <AdminUserCard v-for="user in userList" :key="user.id" :userdata="user"/>
     </div>
   </div>
@@ -28,9 +24,13 @@ export default {
     }
   },
   methods: {
+    setInfoText(text) {
+      this.$refs.findUsersSB.setInfoText(text)
+    },
     updateList(list) {
       this.userList = list
-      this.$refs.findUsersSB.openBody = false
+      if (this.userList.length > 0)
+        this.$refs.findUsersSB.openBody = false
     }
   }
 }

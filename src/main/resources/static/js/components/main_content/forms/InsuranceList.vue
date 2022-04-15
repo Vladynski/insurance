@@ -83,13 +83,15 @@ export default {
       })
     }
   },
-  mounted() {
+  beforeMount() {
     this.$api.getMyInsurance().then(
         (ok) => {
           this.insuranceList = ok.data
+          this.sortListByInsuranceStatus()
         },
         (err) => {
-          this.insuranceList = false
+          //FIXME show error
+          this.insuranceList = undefined
         }
     )
   }

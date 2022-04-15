@@ -8,14 +8,15 @@
 </template>
 
 <script>
-import TextArea from "../../items/TextArea.vue";
-import Button from "../../items/Button.vue";
+import TextArea from "../../../../items/TextArea.vue";
+import Button from "../../../../items/Button.vue";
 
 export default {
   components: {Button, TextArea},
   props: ['email'],
   methods: {
     send() {
+      //FIXME
       console.log(this.$refs.textArea.getText());
     }
   }

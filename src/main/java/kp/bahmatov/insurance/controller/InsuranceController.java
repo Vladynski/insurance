@@ -1,5 +1,6 @@
 package kp.bahmatov.insurance.controller;
 
+import kp.bahmatov.insurance.domain.dto.filter.InsuranceFilterDto;
 import kp.bahmatov.insurance.domain.dto.insurance.InsuranceInDto;
 import kp.bahmatov.insurance.domain.dto.insurance.InsuranceOutDto;
 import kp.bahmatov.insurance.domain.structure.insurance.Insurance;
@@ -38,5 +39,11 @@ public class InsuranceController {
     public List<InsuranceOutDto> getAllMy() {
         List<Insurance> allMy = insuranceService.getAllMy();
         return allMy.stream().map(InsuranceOutDto::new).toList();
+    }
+
+    //FIXME admin only
+    @PostMapping("/filter")
+    public List<InsuranceOutDto> filter(@Valid @RequestBody InsuranceFilterDto filterDto) {
+        return insuranceService.filter(filterDto).stream().map(InsuranceOutDto::new).toList();
     }
 }

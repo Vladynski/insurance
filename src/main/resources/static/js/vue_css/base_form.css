@@ -5,7 +5,7 @@
     padding: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     font-size: 24px;
     background: transparent;
 }
@@ -64,6 +64,10 @@
     margin-right: 20px;
 }
 
+.block-column-items-margin > *:not(:last-child) {
+    margin-bottom: 20px;
+}
+
 .block-items-margin > * {
     margin: 10px;
 }
@@ -117,7 +121,7 @@
 .def-block-vertical-scrolling {
     overflow-y: scroll;
     overflow-x: hidden;
-    padding-right: 3px;
+    padding: 10px 10px 50px 10px;
 }
 
 .scrolling-margin > * {

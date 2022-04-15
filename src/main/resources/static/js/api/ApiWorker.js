@@ -48,9 +48,16 @@ export function createInsuranceDataObject() {
 }
 
 export function createApi(axios) {
-    console.log(axios);
     return {
         axios: axios,
+        selectionData: undefined,
+
+        initSelectionData() {
+            this.axios.get("/selection").then((ok) => {
+                this.selectionData = ok.data
+            })
+            return this;
+        },
 
         errorHandler(err, getForm, getInputs) {
             if (err.response.data === '')
@@ -91,7 +98,12 @@ export function createApi(axios) {
             return 'Basic ' + Base64.encode(username + ':' + password)
         },
 
-        getSelfData(config) {
+        getSelfData(login, password) {
+            let config = login && password ? {
+                headers: {
+                    'Authorization': this.$api.base64Auth(this.username, this.password)
+                }
+            } : undefined
             return this.axios.get('/users/self', config)
         },
 
@@ -112,7 +124,21 @@ export function createApi(axios) {
         },
 
         getSelectionData() {
-            return this.axios.get("/selection")
+            return this.selectionData
+        },
+
+        getSelectionNamesByIds(ids) {
+            if (!this.selectionData)
+                return ['Произошла ошибка при загрузке информации']
+
+            let resultList = []
+            this.selectionData.selections.forEach(selection => {
+                selection.variants.forEach(variant => {
+                    if (ids.indexOf(variant.id) !== -1)
+                        resultList.push(variant.name)
+                })
+            })
+            return resultList
         },
 
         getMailSendTimeoutSeconds() {
@@ -153,6 +179,10 @@ export function createApi(axios) {
             return this.axios.post('/questions', {
                 text: text
             })
+        },
+
+        getMyQuestions() {
+            return this.axios.get('/questions')
         },
 
         getFaqList() {

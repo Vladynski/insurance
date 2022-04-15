@@ -4,8 +4,9 @@ export function createAdminApi(axios) {
     return {
         axios: axios,
 
-        userFilter(firstName, secondName, patronymic, email, passportId, id, insuranceDataId, admin) {
+        userFilter(id, firstName, secondName, patronymic, email, passportId, insuranceDataId, admin) {
             let data = {}
+
             if (firstName)
                 data['first_name'] = firstName
             if (secondName)
@@ -24,6 +25,39 @@ export function createAdminApi(axios) {
                 data['passport_id'] = passportId
 
             return this.axios.post('/users/filter', data)
+        },
+
+        insuranceFilter(id, insuranceDataId, userId, ownerFirstName,
+                        ownerSecondName, ownerPatronymic, winNumber, registrationNumber,
+                        passportId, phone, status) {
+            let data = {}
+
+            if (id)
+                data['id'] = id
+            if (insuranceDataId)
+                data['creator'] = insuranceDataId
+            if (userId)
+                data['user_id'] = userId
+            if (ownerFirstName)
+                data['owner_first_name'] = ownerFirstName
+            if (ownerSecondName)
+                data['owner_second_name'] = ownerSecondName
+            if (ownerPatronymic)
+                data['owner_patronymic'] = ownerPatronymic
+            if (winNumber)
+                data['win_number'] = winNumber
+            if (registrationNumber)
+                data['registration_number'] = registrationNumber
+            if (passportId)
+                data['passport_id'] = passportId
+            if (phone)
+                data['phone'] = phone
+            if (status)
+                data['status'] = status
+
+            console.log(data);
+
+            return this.axios.post('/insurance/filter', data)
         },
 
         editUserDataBuilder(id) {
@@ -69,6 +103,33 @@ export function createAdminApi(axios) {
 
         editUserData(data) {
             return this.axios.put('/users', data)
+        },
+
+        addFaq(question, answer) {
+            return this.axios.post('/faq', {
+                question: question,
+                answer: answer
+            })
+        },
+
+        updateFaq(id, question, answer) {
+            return this.axios.put('/faq', {
+                id: id,
+                question: question,
+                answer: answer
+            })
+        },
+
+        deleteFaq(id) {
+            return this.axios.delete('/faq?id=' + id)
+        },
+
+        getQuestions() {
+            return this.axios.get('/questions/admin')
+        },
+
+        setQuestionAnswer(id, text) {
+            return this.axios.put(`/questions?id=${id}&answer=${text}`)
         }
     }
 }
