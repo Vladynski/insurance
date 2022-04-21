@@ -1,8 +1,11 @@
 package kp.bahmatov.insurance.domain.structure.insurance;
 
-import kp.bahmatov.insurance.config.dataformat.IntListConverter;
+import kp.bahmatov.insurance.config.dataformat.LongListConverter;
 import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserData;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -31,8 +34,8 @@ public class Insurance {
     @Enumerated(EnumType.STRING)
     private InsuranceStatus status;
     private LocalDateTime endTime;
-    @Convert(converter = IntListConverter.HibernateIntListConverter.class)
-    private List<Integer> variants;
+    @Convert(converter = LongListConverter.HibernateLongListConverter.class)
+    private List<Long> variants;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Payment payment;

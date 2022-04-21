@@ -130,6 +130,7 @@
 
 .def-block-vertical-scrolling::-webkit-scrollbar {
     width: 10px;
+    padding-bottom: 20px
 }
 
 /* Track */

@@ -4,7 +4,7 @@
       <Button class="btn green-btn d-btn-max-size" :click="createFaq">Добавить новый вопрос</Button>
     </div>
     <div class="block-column block-items-margin def-block-vertical-scrolling"
-         style=" justify-content: flex-start; padding-bottom: 115px">
+         style="justify-content: flex-start;">
       <template v-for="(item, index) in faqList" :key="item.question">
         <FaqCard :id="item.id" :question="item.question" :answer="item.answer" :deleteFunction="deleteFaq"
                  :editable="true" :startEditMode="item.id===undefined"/>

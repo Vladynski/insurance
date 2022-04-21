@@ -20,7 +20,10 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class InsuranceService {
@@ -59,7 +62,7 @@ public class InsuranceService {
         insurance.setRegistrationNumber(insuranceDto.getRegistrationNumber());
         insurance.setStatus(InsuranceStatus.AWAITING_PAYMENT);
         insurance.setEndTime(LocalDateTime.now().plusMonths(6));
-        insurance.setVariants(Arrays.asList(insuranceDto.getSelectionVariantsIds()));
+        insurance.setVariants(List.of(insuranceDto.getSelectionVariantsIds()));
 
         List<SelectionVariant> variants = selectionService.findByIds(List.of(insuranceDto.getSelectionVariantsIds()));
         float sum = calculate(variants);
@@ -95,7 +98,7 @@ public class InsuranceService {
         if (groupCount != variants.size())
             throw new BadRequestException("В запросе должно быть по одному варианту из каждой группы выбора");
 
-        Set<Integer> groupIds = new HashSet<>();
+        Set<Long> groupIds = new HashSet<>();
         for (SelectionVariant variant : variants) {
             groupIds.add(variant.getId());
         }

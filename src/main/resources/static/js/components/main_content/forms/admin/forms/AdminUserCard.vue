@@ -70,7 +70,7 @@
               <Button :click="toSendMailSlide" class="btn green-btn d-btn-max-size" title="Отправить письмо">📧
               </Button>
               <Button :startBlock="userdata.insurance.status === 'NONE'" class="btn green-btn d-btn-max-size"
-                      title="Псмотреть фото паспорта">📷️
+                      title="Посмотреть фото паспорта">📷️
               </Button>
             </div>
             <Button :click="editUserData" class="btn green-btn d-btn-max-size">Применить изменения

@@ -24,6 +24,12 @@ export function checkNumbersInputUpdate(event) {
         event.preventDefault()
 }
 
+export function checkRealNumbersInputUpdate(event) {
+    if (('1234567890.'.indexOf(event.key) === -1 && event.key !== 'Backspace') ||
+        (event.key === '.' && event.target.value.indexOf('.') !== -1))
+        event.preventDefault()
+}
+
 export function getFormatPhoneNumber(phoneNumber) {
     if (!phoneNumber)
         return '+375 '
@@ -31,7 +37,7 @@ export function getFormatPhoneNumber(phoneNumber) {
 }
 
 export function removeSpaces(text) {
-    return text.replace(/\s/g, '')
+    return text.toString().replace(/\s/g, '')
 }
 
 export function clearPhoneNumber(phoneNumber) {

@@ -1,6 +1,9 @@
 <template>
   <div class="block-row row-list" style="justify-content: space-around" >
-    <div v-for="item in items" class="row-list-item" :style="width">{{ item }}</div>
+    <template v-for="(item, index) in items">
+      <div class="row-list-item" :style="width">{{ item }}</div>
+      <hr class="v-separator" v-if="index !== items.length - 1">
+    </template>
   </div>
 </template>
 
@@ -9,7 +12,7 @@ export default {
   props: ['items'],
   data(){
     return {
-      width: 'width: ' + 100 / this.items.length + '%'
+      width: 'auto'
     }
   }
 }
@@ -27,7 +30,7 @@ export default {
   padding: 7px;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.01);
-  border: 1px solid rgba(255,255,255, 0.8);
+  /*border: 1px solid rgba(255,255,255, 0.8);*/
   /*border: 1px solid white;*/
 }
 </style>

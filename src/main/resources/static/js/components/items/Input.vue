@@ -105,9 +105,9 @@ export default {
     }
   },
   mounted() {
-    this.text = this.value || ''
+    this.text = this.value === 0 ? '0' : this.value || ''
     if (this.changeListener)
-      this.startValue = this.text
+      this.startValue = this.getText()
     this.update()
   }
 }

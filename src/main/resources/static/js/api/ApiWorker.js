@@ -101,7 +101,7 @@ export function createApi(axios) {
         getSelfData(login, password) {
             let config = login && password ? {
                 headers: {
-                    'Authorization': this.$api.base64Auth(this.username, this.password)
+                    'Authorization': this.base64Auth(login, password)
                 }
             } : undefined
             return this.axios.get('/users/self', config)
@@ -127,18 +127,29 @@ export function createApi(axios) {
             return this.selectionData
         },
 
-        getSelectionNamesByIds(ids) {
+        getSelectionNamesByIds(ids, list) {
             if (!this.selectionData)
                 return ['Произошла ошибка при загрузке информации']
 
-            let resultList = []
             this.selectionData.selections.forEach(selection => {
+                console.log(selection);
                 selection.variants.forEach(variant => {
-                    if (ids.indexOf(variant.id) !== -1)
-                        resultList.push(variant.name)
+                    if (ids.indexOf(variant.id) !== -1) {
+                        list.push(variant.name)
+                        ids.splice(ids.indexOf(variant.id), 1)
+                    }
                 })
             })
-            return resultList
+
+            this.getSelectionVariants(ids).then((ok) => {
+                ok.data.forEach(variant => list.push(variant.name))
+            })
+        },
+
+        getSelectionVariants(ids) {
+            let result = ''
+            ids.forEach(el => result += (el + ','))
+            return this.axios.get('/selection/variant?ids=' + result.substring(0, result.length - 1))
         },
 
         getMailSendTimeoutSeconds() {

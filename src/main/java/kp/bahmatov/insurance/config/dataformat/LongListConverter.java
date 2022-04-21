@@ -2,17 +2,16 @@ package kp.bahmatov.insurance.config.dataformat;
 
 
 import javax.persistence.AttributeConverter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class IntListConverter {
-    public static final class HibernateIntListConverter implements AttributeConverter<Iterable<Integer>, String> {
+public class LongListConverter {
+    public static final class HibernateLongListConverter implements AttributeConverter<Iterable<Long>, String> {
         private static final char ITEMS_SEPARATOR = ';';
 
 
         @Override
-        public String convertToDatabaseColumn(Iterable<Integer> integers) {
+        public String convertToDatabaseColumn(Iterable<Long> integers) {
             if (!integers.iterator().hasNext())
                 return "";
             
@@ -23,12 +22,12 @@ public class IntListConverter {
         }
 
         @Override
-        public Iterable<Integer> convertToEntityAttribute(String s) {
+        public Iterable<Long> convertToEntityAttribute(String s) {
             if (s.isBlank())
                 return Collections.emptyList();
 
             String[] split = s.split(ITEMS_SEPARATOR + "");
-            return Arrays.stream(split).map(Integer::parseInt).toList();
+            return Arrays.stream(split).map(Long::parseLong).toList();
         }
     }
 }

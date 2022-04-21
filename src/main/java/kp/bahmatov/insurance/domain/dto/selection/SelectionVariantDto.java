@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 //fixme check in
 public class SelectionVariantDto {
-    private int id;
+    private long id;
     private int groupId;
     private String name;
     private float coefficient;

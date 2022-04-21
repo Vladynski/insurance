@@ -1,5 +1,5 @@
 <template>
-  <div v-show="view" ref="content" class="base-form-data"
+  <div v-if="view || isShowByNotIf" v-show="view" ref="content" class="base-form-data"
        :style="['width: 100%; height: 100%; transition-duration: 300ms', noPadding ? 'padding: 0px' : '']">
     <slot></slot>
   </div>
@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  props: ['title', 'pageSliderGetter', 'defView', 'noPadding', 'nextAction', 'previewAction', 'init'],
+  props: ['title', 'pageSliderGetter', 'defView', 'noPadding', 'nextAction', 'previewAction', 'init', 'showByIf'],
   data() {
     return {
       view: this.defView,
@@ -16,7 +16,8 @@ export default {
       simpleNext: false,
       simplePreview: false,
       nextSlide: this.nextAction,
-      previewSlide: this.previewAction
+      previewSlide: this.previewAction,
+      isShowByNotIf: !this.showByIf
     }
   },
   methods: {

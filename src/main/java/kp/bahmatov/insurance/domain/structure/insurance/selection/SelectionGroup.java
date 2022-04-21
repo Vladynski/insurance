@@ -1,9 +1,13 @@
 package kp.bahmatov.insurance.domain.structure.insurance.selection;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +27,8 @@ public class SelectionGroup {
             fetch = FetchType.EAGER,
             mappedBy = "group"
     )
-    private List<SelectionVariant> variants;
+    private List<SelectionVariant> variants = new ArrayList<>();
+    private boolean isActive = true;
 
     @Override
     public boolean equals(Object o) {

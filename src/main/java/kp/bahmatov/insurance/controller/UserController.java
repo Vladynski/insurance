@@ -5,11 +5,8 @@ import kp.bahmatov.insurance.domain.dto.filter.UserFilter;
 import kp.bahmatov.insurance.domain.dto.user.AdminUserDataDto;
 import kp.bahmatov.insurance.domain.dto.user.SelfUserOutDto;
 import kp.bahmatov.insurance.domain.structure.User;
-import kp.bahmatov.insurance.repo.specification.SpecificationBuilder;
-import kp.bahmatov.insurance.repo.specification.StructureSpecification;
 import kp.bahmatov.insurance.service.UserService;
 import kp.bahmatov.insurance.service.interfaces.Auth;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -49,8 +46,8 @@ public class UserController {
         return userService.filter(userFilter).stream().map(AdminUserDataDto::new).toList();
     }
 
-    @PutMapping("/ban{userId}")
-    public void ban(@PathVariable Integer userId) {
+    @PutMapping("/ban")
+    public void ban(@RequestParam("id") Integer userId) {
         userService.ban(userId);
     }
 }

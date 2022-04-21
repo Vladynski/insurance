@@ -78,7 +78,7 @@ export default {
       timer: undefined,
       secondsLeft: undefined,
       leftTime: undefined,
-      variantNames: undefined
+      variantNames: []
     }
   },
   methods: {
@@ -118,7 +118,7 @@ export default {
     }
   },
   beforeMount() {
-    this.variantNames = this.$api.getSelectionNamesByIds(this.insurance.variants)
+     this.$api.getSelectionNamesByIds(this.insurance.variants, this.variantNames)
   },
   mounted() {
     this.secondsLeft = new Date(this.insurance.payment.deadline).getTime() - new Date().getTime()

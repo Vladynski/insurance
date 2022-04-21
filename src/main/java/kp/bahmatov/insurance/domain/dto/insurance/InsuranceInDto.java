@@ -25,5 +25,5 @@ public class InsuranceInDto {
     @Pattern(regexp = "\\d{4}[ABEIKMHOFCTX]{2}\\d?", message = "Неверный формат 4цифры2буквы1цифра_при_наличии")
     private String registrationNumber;
     @NotEmpty
-    private Integer[] selectionVariantsIds;
+    private Long[] selectionVariantsIds;
 }

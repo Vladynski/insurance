@@ -1,6 +1,9 @@
 package kp.bahmatov.insurance.domain.structure.insurance.selection;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -14,13 +17,14 @@ import java.util.Objects;
 public class SelectionVariant {
     @Id
     @GeneratedValue
-    private int id;
-    @ManyToOne(targetEntity = SelectionGroup.class, fetch = FetchType.LAZY)
+    private long id;
+    @ManyToOne(targetEntity = SelectionGroup.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private SelectionGroup group;
     @Column(length = 64)
     private String name;
     private float coefficient;
+    private boolean active = true;
 
     @Override
     public boolean equals(Object o) {

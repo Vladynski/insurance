@@ -130,6 +130,43 @@ export function createAdminApi(axios) {
 
         setQuestionAnswer(id, text) {
             return this.axios.put(`/questions?id=${id}&answer=${text}`)
+        },
+
+        getSelectionData() {
+            return this.axios.get("/selection")
+        },
+
+        updateSelectionVariant(id, groupId, name, coefficient) {
+            const data = {}
+
+            if (id)
+                data.id = id
+            if (groupId)
+                data.group_id = groupId
+            if (name)
+                data.name = name
+            if (coefficient)
+                data.coefficient = coefficient.toString().replace(',', '.')
+
+            console.log(data);
+
+            return this.axios.put('/selection/variant', data)
+        },
+
+        deleteSelectionVariant(id) {
+            return axios.delete('/selection/variant?id=' + id)
+        },
+
+        deleteGroup(id) {
+            return axios.delete('/selection/group?id=' + id)
+        },
+
+        getGroup(id) {
+            return axios.get('/selection/group?id=' + id)
+        },
+
+        updateGroup(id, name) {
+            return this.axios.put(`/selection/group?id=${id}&name=${name}`)
         }
     }
 }

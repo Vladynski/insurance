@@ -1,6 +1,7 @@
 <template>
   <div class="sliding-block block-column">
-    <a class="block-row sliding-block-title unselectable" @click="clickAction">
+    <a :class="['block-row sliding-block-title unselectable', positionDefault ? 'top-corners-ring' : 'all-corners-ring']"
+       @click="clickAction">
       <div>
         {{ title }}
       </div>
@@ -8,7 +9,8 @@
         {{ infoText }}
       </div>
     </a>
-    <div :class="['sliding-block-body', openBody ? 'sliding-block-open-body': '']">
+    <div
+        :class="['sliding-block-body', positionDefault ? '' : 'sliding-block-body-absolute', openBody ? positionDefault ? 'sliding-block-open-body-default' : 'sliding-block-open-body-absolute': '']">
       <div class="block-column">
         <slot></slot>
       </div>
@@ -18,7 +20,7 @@
 
 <script>
 export default {
-  props: ['title'],
+  props: ['title', 'positionDefault'],
   data() {
     return {
       openBody: false,
@@ -37,6 +39,18 @@ export default {
 </script>
 
 <style scoped>
+.all-corners-ring {
+  border-radius: 5px;
+}
+
+.top-corners-ring {
+  border-radius: 5px 5px 0 0;
+}
+
+.sliding-block-body {
+
+}
+
 .sliding-block {
   width: 100%;
   height: auto;
@@ -53,28 +67,34 @@ export default {
   color: #e5ffe5;
   background-color: inherit;
   text-align: left;
-  border-radius: 5px;
   font-size: 20px;
 }
 
 .sliding-block-body {
   transition-duration: 500ms;
-  z-index: 1;
   max-height: 0;
   height: auto;
   width: 100%;
   overflow: hidden;
   background-color: #b1e1ec;
+}
+
+.sliding-block-open-body-default {
+  max-height: 1000px;
+}
+
+.sliding-block-body-absolute {
+  z-index: 1;
   position: absolute;
   top: 40px
 }
 
-.sliding-block-open-body {
+.sliding-block-open-body-absolute {
   transition-duration: 300ms;
   max-height: 590px;
 }
 
-.sliding-block-title:hover + .sliding-block-body:not(.sliding-block-open-body) {
+.sliding-block-title:hover + .sliding-block-body:not(.sliding-block-open-body-absolute):not(.sliding-block-open-body-default) {
   max-height: 10px;
 }
 

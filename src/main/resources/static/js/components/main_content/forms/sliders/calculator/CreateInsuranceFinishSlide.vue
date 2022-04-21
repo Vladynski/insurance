@@ -10,7 +10,7 @@
     </div>
     <Input ref="verifyIdentity" inputClass="d-input-size" placeholder="Код отправленный на почту"
            style="margin-bottom: 2px"/>
-    <SendConfirmCode/>
+    <SendConfirmCode ref="sendCodeForm"/>
     <div class="block-row block-row-right" style="height: auto; position:relative;">
       <span class="d-text-size">Итоговая сумма <b>полугодовой</b> страховки: {{ yearSum }} BYN</span>
     </div>
@@ -56,6 +56,7 @@ export default {
   },
   mounted() {
     this.yearSum = this.createInsuranceData.metadata.resultSum
+    this.$refs.sendCodeForm.sendCode()
   }
 }
 </script>

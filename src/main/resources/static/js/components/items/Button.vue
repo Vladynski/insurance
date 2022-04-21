@@ -1,17 +1,18 @@
 <template>
   <button :title="title" @click="clickAction" class="btn"
           :disabled="blocked"
-          :class="this.class + (blocked ? ' btn-disabled '  : '')">
+          :class="[this.class, blocked ? ' btn-disabled '  : '', checked ? checkedClass : '']">
     <slot>Button name is not set</slot>
   </button>
 </template>
 
 <script>
 export default {
-  props: ['click', 'class', 'startBlock', 'title'],
+  props: ['click', 'class', 'checkedClass', 'startBlock', 'title'],
   data() {
     return {
-      blocked: false
+      blocked: false,
+      checked: false,
     }
   },
   methods: {
@@ -21,9 +22,15 @@ export default {
     unblock() {
       this.blocked = false
     },
+    check() {
+      this.checked = !this.checked
+    },
     clickAction() {
-      if (!this.blocked)
-        this.click()
+      if (!this.blocked) {
+        if (this.checkedClass)
+          this.check()
+        this.click(this.checked)
+      }
     }
   },
   mounted() {

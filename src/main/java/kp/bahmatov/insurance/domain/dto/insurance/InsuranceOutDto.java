@@ -20,7 +20,7 @@ public class InsuranceOutDto {
     private final InsuranceStatus status;
     private final LocalDateTime endTime;
     private final PaymentOutDto payment;
-    private final List<Integer> variants;
+    private final List<Long> variants;
 
     public InsuranceOutDto(Insurance insurance) {
         this.id = insurance.getId();

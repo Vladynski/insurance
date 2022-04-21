@@ -44,27 +44,27 @@ export default {
             clearInterval(this.timer)
         }, 1000)
       }
+    },
+    sendCode() {
+      this.$api.requestConfirmationCode().then(
+          (ok) => {
+            this.show = true
+            this.$api.getMailSendTimeoutSeconds().then(
+                (ok) => {
+                  globalSendTimeout = ok.data
+                  this.startTimer()
+                },
+                (err) => {
+                  globalSendTimeout = globalSendTimeoutIfResponseError
+                  this.startTimer()
+                }
+            )
+          },
+          (err) => {
+            this.errorMessage = 'Не удалось запросить код для подтверждения личности'
+          }
+      )
     }
-  },
-  mounted() {
-    this.$api.requestConfirmationCode().then(
-        (ok) => {
-          this.show = true
-          this.$api.getMailSendTimeoutSeconds().then(
-              (ok) => {
-                globalSendTimeout = ok.data
-                this.startTimer()
-              },
-              (err) => {
-                globalSendTimeout = globalSendTimeoutIfResponseError
-                this.startTimer()
-              }
-          )
-        },
-        (err) => {
-          this.errorMessage = 'Не удалось запросить код для подтверждения личности'
-        }
-    )
   }
 }
 </script>

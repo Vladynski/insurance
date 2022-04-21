@@ -32,7 +32,8 @@
         </Slide>
         <Slide ref="createInsuranceFinishSlide"
                title="Финаль этап оформления"
-               :pageSliderGetter="getPageSlider">
+               :pageSliderGetter="getPageSlider"
+               :showByIf="true">
           <CreateInsuranceFinishSlide
               :outUserdata="outUserdata"
               :createInsuranceData="createInsuranceData"></CreateInsuranceFinishSlide>
