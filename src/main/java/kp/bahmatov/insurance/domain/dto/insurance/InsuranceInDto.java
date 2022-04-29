@@ -17,9 +17,8 @@ public class InsuranceInDto {
     private String ownerSecondName;
     @NotBlank
     private String ownerPatronymic;
-    //FIXME remove test
     @NotBlank
-    @Pattern(regexp = "([0-9A-HJ-NPR-Z]{17})|test", message = "Неверный формат поля")
+    @Pattern(regexp = "[0-9A-HJ-NPR-Z]{17}", message = "Неверный формат поля")
     private String winNumber;
     @NotBlank
     @Pattern(regexp = "\\d{4}[ABEIKMHOFCTX]{2}\\d?", message = "Неверный формат 4цифры2буквы1цифра_при_наличии")

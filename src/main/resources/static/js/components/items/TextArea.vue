@@ -1,7 +1,7 @@
 <template>
   <div class="text-area-container">
     <div :class="['text-area-title', bad ? 'bad-text-area-title' : '']">
-      {{ bad ? 'Текст пустой' : title }}
+      {{ bad ? badText ? badText : 'Текст пустой' : title }}
     </div>
     <div class="description">
       <div style="width: 100%; height: 100%; padding:10px">
@@ -27,18 +27,24 @@ export default {
   data() {
     return {
       bad: false,
-      text: this.value
+      text: this.value,
+      badText: undefined
     }
   },
   methods: {
     getText() {
-      return this.$refs.textArea.value
+      return this.text
     },
     update() {
       this.bad = false
+      this.badText = undefined
     },
     clear() {
-      this.$refs.textArea.value = ''
+      this.text = ''
+    },
+    showError(text) {
+      this.badText = text
+      this.bad = true
     },
     test() {
       if (removeSpaces(this.text).length === 0) {
@@ -110,6 +116,7 @@ export default {
 }
 
 .clear-btn {
+  z-index: 1;
   position: absolute;
   right: 5px;
   opacity: 0.5;

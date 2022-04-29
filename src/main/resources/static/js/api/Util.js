@@ -20,12 +20,14 @@ export function checkPhoneInputUpdate(event) {
 }
 
 export function checkNumbersInputUpdate(event) {
-    if ('1234567890'.indexOf(event.key) === -1 && event.key !== 'Backspace')
+    if ((event.key === '-' && event.target.selectionStart === 0) || event.key === 'Tab' || event.key === 'F5') {
+    } else if ('1234567890'.indexOf(event.key) === -1 && event.key !== 'Backspace')
         event.preventDefault()
 }
 
 export function checkRealNumbersInputUpdate(event) {
-    if (('1234567890.'.indexOf(event.key) === -1 && event.key !== 'Backspace') ||
+    if (event.key === '-' && event.target.selectionStart === 0 || event.key === 'Tab' || event.key === 'F5') {
+    } else if (('1234567890.'.indexOf(event.key) === -1 && event.key !== 'Backspace') ||
         (event.key === '.' && event.target.value.indexOf('.') !== -1))
         event.preventDefault()
 }

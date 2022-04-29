@@ -27,8 +27,6 @@ export function createInsuranceDataObject() {
         },
 
         getInsuranceDataForTransfer() {
-            // noinspection JSUnresolvedVariable
-            console.log(clearRegistrationNumber(this.registrationNumber));
             return {
                 creator_is_owner: this.ownerItsMe | false,
                 owner_first_name: this.ownerFirstName ? this.ownerFirstName : '',
@@ -55,6 +53,8 @@ export function createApi(axios) {
         initSelectionData() {
             this.axios.get("/selection").then((ok) => {
                 this.selectionData = ok.data
+            }, (err) => {
+                console.log(err.response);
             })
             return this;
         },
@@ -63,7 +63,7 @@ export function createApi(axios) {
             if (err.response.data === '')
                 return
             if ('message' in err.response.data) {
-                if (getForm())
+                if (getForm)
                     getForm().showError(err.response.data.message)
             } else if ('data' in err.response.data && getInputs && getInputs()) {
                 let data = err.response.data.data;
@@ -132,7 +132,6 @@ export function createApi(axios) {
                 return ['Произошла ошибка при загрузке информации']
 
             this.selectionData.selections.forEach(selection => {
-                console.log(selection);
                 selection.variants.forEach(variant => {
                     if (ids.indexOf(variant.id) !== -1) {
                         list.push(variant.name)
@@ -142,7 +141,9 @@ export function createApi(axios) {
             })
 
             this.getSelectionVariants(ids).then((ok) => {
-                ok.data.forEach(variant => list.push(variant.name))
+                ok.data.forEach(variant => {
+                    list.push(variant.name)
+                })
             })
         },
 
@@ -154,6 +155,10 @@ export function createApi(axios) {
 
         getMailSendTimeoutSeconds() {
             return this.axios.get("/settings/mailSendTimeoutSeconds")
+        },
+
+        getInsuranceContract() {
+            return this.axios.get("/settings/insuranceContractText")
         },
 
         validInsuranceData(insuranceDataObjet) {
@@ -170,12 +175,14 @@ export function createApi(axios) {
             return this.axios.get('/insurance')
         },
 
-        editUserDataDto(password, newEmail, phone) {
+        editUserDataDto(password, newEmail, phone, newPassword) {
             let data = {}
             if (newEmail)
                 data['email'] = newEmail
             if (phone)
                 data['phone'] = phone
+            if (newPassword)
+                data['password'] = newPassword
 
             return this.axios.put('/users', data,
                 {
@@ -198,6 +205,14 @@ export function createApi(axios) {
 
         getFaqList() {
             return this.axios.get('/faq')
+        },
+
+        logout() {
+            return this.axios.get('/logout')
+        },
+
+        pay(paymentId) {
+            return this.axios.post('/payment/pay?paymentId='+paymentId)
         }
     }
 }

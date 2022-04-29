@@ -16,7 +16,6 @@ import FindUserForm from "./forms/FindUserForm.vue";
 import AdminUserCard from "./forms/AdminUserCard.vue";
 
 export default {
-  name: "AdminUsers",
   components: {AdminUserCard, SlidingBlock, Input, FindUserForm},
   data() {
     return {

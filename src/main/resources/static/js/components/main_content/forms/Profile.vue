@@ -1,23 +1,25 @@
 <template>
   <div class="profile-container">
     <div class="base-form-title def-block title-background-container profile-title-background">
-<!--      <div class="title-background "/>-->
-      {{ userdata.second_name + ' ' + userdata.first_name + ' ' + userdata.patronymic }}
+      {{ second_name + ' ' + first_name + ' ' + patronymic }}
     </div>
-    <div class="block-column def-block " style="margin-bottom: 25px">
+    <div class="block-column def-block " style="margin-bottom: 25px; overflow: hidden">
       <span class="base-title">Информация о пользователе</span>
-      <div class="block-row">
-        <div class="card-container">
-          <Card title="Email"
-                :body="userdata.email"
-                :editable="true"
-                :editClick="editEmail"/>
-          <Card title="Дата регистрации"
-                :body="userdata.registration_date"/>
-          <!--FIXME-->
-          <Card title="Оформлено страховок"
-                :body="'0'"/>
+      <div class="block-column" style="position:relative;">
+        <div class="block-row">
+          <div class="card-container">
+            <Card title="Email"
+                  :body="email"
+                  :editable="true"
+                  :editClick="editEmail"/>
+            <Card title="Дата регистрации"
+                  :body="registration_date"/>
+            <Card ref="insuranceCount"
+                  title="Оформлено страховок"
+                  :body="insurance_count"/>
+          </div>
         </div>
+        <ChangePassword/>
       </div>
     </div>
     <div class="block-column def-block">
@@ -28,7 +30,7 @@
                maxlength="19"/>
         <Input ref="phone" placeholder="Мобильный номер телефона" input-class="d-input-size" type="tel"
                :keydown="checkPhone" value="+375 " maxlength="17"/>
-        <FileInput :choose="imgToBase64" id="passportPhoto"></FileInput>
+        <FileInput :choose="processFile" accept=".png, .jpg, .jpeg" id="passportPhoto"></FileInput>
         <div class="row-right">
           <Button :click="createInsuranceData" class="green-btn d-btn-max-size">Отправить</Button>
         </div>
@@ -58,13 +60,23 @@ import Card from '../../items/Card.vue'
 import Input from "../../items/Input.vue";
 import Button from "../../items/Button.vue";
 import FileInput from "../../items/FileInput.vue";
-import {checkPhoneInputUpdate, clearPhoneNumber, getFormatPhoneNumber} from "../../../api/Util";
+import {checkPhoneInputUpdate, clearPhoneNumber, getFormatPhoneNumber} from "../../../api/Util.js";
+import ChangePassword from "../../items/ChangePassword.vue";
 
 export default {
+  components: {ChangePassword, Button, Input, Card, InfoFrame, FileInput},
   props: ['outUserdata'],
   data() {
     return {
+      second_name: this.outUserdata.second_name,
+      first_name: this.outUserdata.first_name,
+      patronymic: this.outUserdata.patronymic,
+      email: this.outUserdata.email,
+      registration_date: this.outUserdata.registration_date,
+      insurance_count: this.outUserdata.insurance_count,
+
       imgBase64: undefined,
+      imgContentFormat: undefined,
       insuranceNotExists: false,
       userdata: this.outUserdata,
       warningMessage: 'У вас нет возможности оформить страховку, т.к. вы не передали необходимые для этого данные: идентификационный номер паспорта, номер телефона, фото паспорта'
@@ -77,17 +89,20 @@ export default {
     formatPhone(phoneNumber) {
       return getFormatPhoneNumber(phoneNumber)
     },
-    //FIXME
-    imgToBase64(file) {
+    processFile(file) {
+      this.setContentType(file)
+
       const reader = new FileReader()
-
       const setter = (value) => this.imgBase64 = value
-
       reader.onloadend = () => {
         setter(reader.result.substring(reader.result.indexOf('64,') + 3))
       }
-
       reader.readAsDataURL(file);
+    },
+    setContentType(file) {
+      const filename = file.name
+      const extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase()
+      this.imgContentFormat = 'image/' + extension
     },
     editPhone(newVal) {
       const password = prompt('Для выполнения действия необходимо ввести пароль')
@@ -104,7 +119,7 @@ export default {
           clearPhoneNumber(this.$refs.phone.getText()),
           this.$refs.passportId.getText().replaceAll(/\\s/g, ''),
           this.imgBase64,
-          'image/png').then(
+          this.imgContentFormat).then(
           (ok) => this.updateUserdata(),
           (err) => {
             this.$api.errorHandler(err, () => {
@@ -119,13 +134,13 @@ export default {
       this.$api.getSelfData().then(
           (ok) => {
             this.userdata = ok.data
+            this.$refs.insuranceCount.setContentBody(this.userdata.insurance_count)
             if (this.userdata.insurance.status !== 'NONE')
               this.insuranceNotExists = false
           }
       )
     }
   },
-  components: {Button, Input, Card, InfoFrame, FileInput},
   beforeMount() {
     if (this.userdata.insurance.status === 'NONE')
       this.insuranceNotExists = true
@@ -135,6 +150,7 @@ export default {
       this.$refs.infoFrame.showWarning(this.warningMessage)
       this.$refs.infoFrame.setConstant(true)
     }
+    this.updateUserdata()
   },
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
-  <div style="width: 100%" class="content">
-    <label :style="[labelColor ? 'color: ' + labelColor : '', badText || text !== '' ? 'opacity: 1' :'']"
+  <div class="input-container">
+    <label :style="[labelColor && !badText ? 'color: ' + labelColor : '', badText || text !== '' ? 'opacity: 1' :'']"
            :class="['pre-label', badText ? 'bad-label' : '']" ref="label"
            :title="badText">{{ badText ? badText : placeholderText }}</label>
     <input ref="inputField" @input="update" @keydown="keydown" :disabled="!canEdit"
@@ -80,14 +80,14 @@ export default {
       this.placeholderText = newPlaceholder
     },
     test() {
-      if ((this.obligatory === undefined || this.obligatory) && this.$refs.inputField.value.trim() === '') {
+      if ((this.obligatory === undefined || this.obligatory) && !this.$refs.inputField.value && this.$refs.inputField.value.trim() === '') {
         this.setBadText('Поле не заполнено!')
         return false
       }
       return true
     },
     silentTest() {
-      return !((this.obligatory === undefined || this.obligatory) && this.$refs.inputField.value.trim() === '');
+      return !((this.obligatory === undefined || this.obligatory) && !this.$refs.inputField.value && this.$refs.inputField.value.trim() === '');
     },
     update() {
       this.changed = this.changeListener && this.startValue !== this.text
@@ -113,7 +113,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .custom-light-input:disabled,
 .custom-light-input:disabled:not(:placeholder-shown):not(.bad),
 .custom-light-input:disabled:hover,
@@ -174,9 +174,10 @@ export default {
   color: black;
 }
 
-.content {
+.input-container {
   overflow: visible;
   position: relative;
+  width: 100%;
 }
 
 .changed-input,

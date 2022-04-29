@@ -13,13 +13,13 @@
   </div>
   <div class="block-column" style="margin-top: 45px; width: 75%; height: auto">
     <InfoFrame v-if="!hasInsuranceData" ref="infoFrame"></InfoFrame>
-    <div v-else class="block-row block-row-right"
+    <div v-else class="block-column block-column-items-margin"
          :style="['height: 45px; margin-top: 15px', hasSelected ? 'opacity: 1' : 'opacity: 0']">
-      <!--      FIXME-->
-      <Checkbox ref="acceptCheckBox">ыы <a href="#">tochno ыы</a>
+      <Checkbox ref="acceptCheckBox">
+        Оформляя страховку вы подтверждаете что согласны с <a @click="showBanner" class="requirement">условиями</a>
       </Checkbox>
       <Button :click="updateInsuranceData" ref="nextButton" startBlock="true"
-              class="btn green-btn d-btn-max-size" style="width: 260px">
+              class="btn green-btn d-btn-max-size">
         Оформить страховку
       </Button>
     </div>
@@ -79,7 +79,7 @@ export default {
           result += base * el.coefficient - base
         })
         this.createInsuranceData.metadata.resultSum = result
-        this.result = 'Итоговая сумма: ' + result + ' BYN'
+        this.result = 'Итоговая стоимость: ' + result + ' BYN'
         this.showCreateInsuranceForm()
       } else {
         this.result = 'Выберите вариант каждого пункта 👉'
@@ -87,6 +87,11 @@ export default {
     },
     getPageSlider() {
       return this.$refs.pageSlider
+    },
+    showBanner() {
+      this.$api.getInsuranceContract().then((ok) => {
+        this.$banner.showHtmlText("Что-то типа договора", ok.data)
+      })
     }
   },
   mounted() {
@@ -128,5 +133,13 @@ export default {
 
 .select-items-margin > div {
   margin-top: 35px;
+}
+
+.requirement {
+  text-decoration: underline;
+  background-color: white;
+  display: inline-block;
+  border-radius: 2px;
+  padding: 2px;
 }
 </style>

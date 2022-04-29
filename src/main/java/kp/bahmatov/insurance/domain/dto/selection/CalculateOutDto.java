@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 
 @Getter
 public class CalculateOutDto {
-    private final List<SelectionGroupDto> selections;
+    private final List<SelectionGroupOutDto> selections;
     private final float baseSum;
 
 
     public CalculateOutDto(List<SelectionGroup> all, float baseSum) {
-        selections = all.stream().map(SelectionGroupDto::new).collect(Collectors.toList());
+        selections = all.stream().map(SelectionGroupOutDto::new).collect(Collectors.toList());
         this.baseSum = baseSum;
     }
 }

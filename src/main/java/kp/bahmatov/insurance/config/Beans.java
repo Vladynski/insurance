@@ -11,7 +11,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 @Configuration
 public class Beans {
-    //FIXME не здесь это должно быть
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -34,26 +34,30 @@ export default {
       showInsuranceList: false,
       askQuestion: false,
       faq: false,
-      adminPanel: true
+      adminPanel: false
     }
   },
   mounted() {
+    this.$refs.menu.addItem('Профиль', "profile.png", () => this.showProfile = true, () => this.showProfile = false)
+    this.$refs.menu.addItem('Страховки', "list.png", () => this.showInsuranceList = true, () => this.showInsuranceList = false)
+    this.$refs.menu.addItem('Оформление', "secure-insurance.png", () => this.showCalculator = true, () => this.showCalculator = false)
+    this.$refs.menu.addItem('FAQ', "faq.png", () => this.faq = true, () => this.faq = false)
+    this.$refs.menu.addItem('Задать вопрос', "question.png", () => this.askQuestion = true, () => this.askQuestion = false)
+    this.$refs.menu.addItem('Выйти', "logout.png", () => {
+      this.$api.logout().then((ok) => {
+        document.location.reload()
+      })
+    }, () => this.askQuestion = false)
+
     this.$api.getSelfData().then(
         (ok) => {
           this.userdata = ok.data
-          // this.showProfile = true
           this.username = this.userdata.second_name + ' ' + this.userdata.first_name + ' ' + this.userdata.patronymic
           if (this.userdata.roles.indexOf('ADMIN') >= 0) {
-            this.$refs.menu.addItem('Админ.', "admin.png",() => this.adminPanel = true, () => this.adminPanel = false)
+            this.$refs.menu.addItemByIndex(-1, 'Админ.', "admin.png", () => this.adminPanel = true, () => this.adminPanel = false)
           }
         }
     )
-    this.$refs.menu.addItem('Профиль', "profile.png",() => this.showProfile = true, () => this.showProfile = false)
-    this.$refs.menu.addItem('Страховки', "list.png",() => this.showInsuranceList = true, () => this.showInsuranceList = false)
-    this.$refs.menu.addItem('Оформление', "secure-insurance.png",() => this.showCalculator = true, () => this.showCalculator = false)
-    this.$refs.menu.addItem('FAQ', "faq.png",() => this.faq = true, () => this.faq = false)
-    this.$refs.menu.addItem('Задать вопрос', "question.png",() => this.askQuestion = true, () => this.askQuestion = false)
-    this.$refs.menu.addItem('Настройки', "question.png",() => this.adminPanel = true, () => this.adminPanel = false)
   }
 }
 </script>

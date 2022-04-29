@@ -25,7 +25,8 @@
         </Slide>
         <Slide ref="checkInsuranceDataSlide"
                title="Проверка данных"
-               :pageSliderGetter="getPageSlider">
+               :pageSliderGetter="getPageSlider"
+               :showByIf="true">
           <CheckInsuranceDataSlide
               :createInsuranceData="createInsuranceData"
               :nextSlide="()=> this.getPageSlider().nextSlide()"></CheckInsuranceDataSlide>

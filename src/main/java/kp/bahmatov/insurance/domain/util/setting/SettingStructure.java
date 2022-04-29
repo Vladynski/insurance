@@ -1,6 +1,9 @@
 package kp.bahmatov.insurance.domain.util.setting;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -15,6 +18,7 @@ import java.util.Objects;
 public class SettingStructure implements Setting {
     @Id
     private String key;
+    @Column(length = 8192)
     private String value;
     private String description;
     @Enumerated(EnumType.STRING)

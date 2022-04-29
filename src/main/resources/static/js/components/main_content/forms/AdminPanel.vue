@@ -19,6 +19,9 @@
     <div v-show="selections" class="base-form-data def-block">
       <SelectionVariants/>
     </div>
+    <div v-show="settings" class="base-form-data def-block">
+      <Settings/>
+    </div>
   </div>
 </template>
 
@@ -29,16 +32,20 @@ import InsuranceAdminList from "./admin/InsuranceAdminList.vue";
 import FaqEditor from "./admin/FaqEditor.vue";
 import UserQuestions from "./admin/UserQuestions.vue";
 import SelectionVariants from "./admin/SelectionVariants.vue";
+import Settings from "./admin/Settings.vue";
 
 export default {
-  components: {SelectionVariants, UserQuestions, FaqEditor: FaqEditor, RadioButtonGroup, AdminUsers, InsuranceAdminList},
+  components: {
+    Settings, SelectionVariants, UserQuestions,
+    FaqEditor, RadioButtonGroup, AdminUsers, InsuranceAdminList
+  },
   data() {
     return {
-      adminUsers: false ,
+      adminUsers: true,
       insuranceList: false,
       faqEditor: false,
       userQuestions: false,
-      selections: true,
+      selections: false,
       settings: false,
       items: [
         {

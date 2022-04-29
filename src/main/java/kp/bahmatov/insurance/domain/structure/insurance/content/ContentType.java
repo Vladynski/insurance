@@ -6,7 +6,9 @@ import java.util.Arrays;
 
 @Getter
 public enum ContentType {
-    IMAGE_PNG("image", "png");
+    IMAGE_PNG("image", "png"),
+    IMAGE_JPG("image", "jpg"),
+    IMAGE_JPEG("image", "jpeg");
 
     final String data;
     final String type;

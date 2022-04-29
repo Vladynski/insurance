@@ -54,7 +54,7 @@ public class ConfirmerService {
         return ifLifetimeLongerThanMinutesGetCode(confirmer, generateConfirmerMinPeriod) == null;
     }
 
-    private Confirmer getMyConfirmer() {
+    public Confirmer getMyConfirmer() {
         return confirmerRepo.findByOwner(auth.getUser());
     }
 

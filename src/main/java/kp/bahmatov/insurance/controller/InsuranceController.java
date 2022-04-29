@@ -6,6 +6,8 @@ import kp.bahmatov.insurance.domain.dto.insurance.InsuranceOutDto;
 import kp.bahmatov.insurance.domain.structure.insurance.Insurance;
 import kp.bahmatov.insurance.service.ConfirmerService;
 import kp.bahmatov.insurance.service.InsuranceService;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,6 +26,7 @@ public class InsuranceController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public void createInsurance(@RequestParam(defaultValue = "") String code,
                                 @Valid @RequestBody InsuranceInDto insuranceDto) {
         confirmerService.throwExceptionIfItIsNotAuthUserCode(code);
@@ -41,8 +44,8 @@ public class InsuranceController {
         return allMy.stream().map(InsuranceOutDto::new).toList();
     }
 
-    //FIXME admin only
     @PostMapping("/filter")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<InsuranceOutDto> filter(@Valid @RequestBody InsuranceFilterDto filterDto) {
         return insuranceService.filter(filterDto).stream().map(InsuranceOutDto::new).toList();
     }

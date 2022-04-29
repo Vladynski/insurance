@@ -12,7 +12,7 @@
            style="margin-bottom: 2px"/>
     <SendConfirmCode ref="sendCodeForm"/>
     <div class="block-row block-row-right" style="height: auto; position:relative;">
-      <span class="d-text-size">Итоговая сумма <b>полугодовой</b> страховки: {{ yearSum }} BYN</span>
+      <span class="d-text-size">Итоговая стоимость <b>полугодовой</b> страховки: {{ yearSum }} BYN</span>
     </div>
     <Button ref="drawUpButton" class="btn green-btn d-btn-max-size" :click="createInsuranceAction">Оформить</Button>
   </div>
@@ -25,6 +25,7 @@ import Select from "../../../../items/Select.vue";
 import Input from "../../../../items/Input.vue";
 import InfoFrame from "../../../../items/InfoFrame.vue";
 import SendConfirmCode from "../../../../items/SendConfirmCode.vue";
+import {removeSpaces} from "../../../../../api/Util";
 
 export default {
   props: ['nextSlide', 'createInsuranceData'],
@@ -38,10 +39,10 @@ export default {
   methods: {
     createInsuranceAction() {
       if (this.$refs.verifyIdentity.test()) {
-        if (this.$refs.verifyIdentity.getText().length === 32) {
-          this.$api.createInsurance(this.createInsuranceData, this.$refs.verifyIdentity.getText()).then(
+        const code = removeSpaces(this.$refs.verifyIdentity.getText())
+        if (code.length === 32) {
+          this.$api.createInsurance(this.createInsuranceData, code).then(
               (ok) => {
-                //FIXME
                 this.createInsuranceData.clear()
                 this.$refs.infoFrame.showOk('Страховка оформлена. Перейдите в раздел Страховки чтобы посмотреть подробности. Так же вам на почту было выслано письмо с условиями сделки')
               }, (err) => {

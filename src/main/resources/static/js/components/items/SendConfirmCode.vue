@@ -1,8 +1,8 @@
 <template>
   <div v-show="show" class="block-row block-row-right" style="font-size: 16px">
-      <span v-if="sendTimeout > 0">
-        Повторно запросить код можно будет через {{ sendTimeout }} сек
-      </span>
+    <span v-if="sendTimeout > 0">
+      Повторно запросить код можно будет через {{ sendTimeout }} сек.
+    </span>
     <span v-else-if="errorMessage">
       {{ errorMessage }}
     </span>
@@ -44,24 +44,18 @@ export default {
             clearInterval(this.timer)
         }, 1000)
       }
+      this.show = true
     },
     sendCode() {
-      this.$api.requestConfirmationCode().then(
+      this.$api.requestConfirmationCode()
+      this.$api.getMailSendTimeoutSeconds().then(
           (ok) => {
-            this.show = true
-            this.$api.getMailSendTimeoutSeconds().then(
-                (ok) => {
-                  globalSendTimeout = ok.data
-                  this.startTimer()
-                },
-                (err) => {
-                  globalSendTimeout = globalSendTimeoutIfResponseError
-                  this.startTimer()
-                }
-            )
+            globalSendTimeout = ok.data
+            this.startTimer()
           },
           (err) => {
-            this.errorMessage = 'Не удалось запросить код для подтверждения личности'
+            globalSendTimeout = globalSendTimeoutIfResponseError
+            this.startTimer()
           }
       )
     }

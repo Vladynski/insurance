@@ -32,7 +32,11 @@ export default {
     getInputText() {
       return this.$refs.input.getText()
     },
+    setContentBody(text) {
+      this.contentBody = text
+    },
     clickEdit() {
+      this.$refs.input.update()
       this.editClick(this.getInputText()).then(
           (ok) => {
             let placeholderText = this.$refs.input.getPlaceholder();

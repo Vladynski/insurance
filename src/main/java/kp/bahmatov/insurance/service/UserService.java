@@ -9,32 +9,31 @@ import kp.bahmatov.insurance.domain.structure.insurance.content.Content;
 import kp.bahmatov.insurance.domain.structure.insurance.content.ContentType;
 import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserData;
 import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserDataStatus;
-import kp.bahmatov.insurance.exceptions.ForbiddenException;
-import kp.bahmatov.insurance.exceptions.PasswordConfirmationException;
-import kp.bahmatov.insurance.exceptions.UserAlreadyExistsException;
-import kp.bahmatov.insurance.exceptions.UserNotFoundException;
-import kp.bahmatov.insurance.repo.InsuranceDataRepo;
+import kp.bahmatov.insurance.exceptions.*;
+import kp.bahmatov.insurance.repo.InsuranceRepo;
+import kp.bahmatov.insurance.repo.InsuranceUserDataRepo;
 import kp.bahmatov.insurance.repo.UserRepo;
 import kp.bahmatov.insurance.repo.specification.SpecificationBuilder;
 import kp.bahmatov.insurance.repo.specification.StructureSpecification;
 import kp.bahmatov.insurance.repo.specification.reflection.SpecificBuilderByDto;
 import kp.bahmatov.insurance.service.interfaces.Auth;
 import kp.bahmatov.insurance.util.CodeGenerator;
+import kp.bahmatov.insurance.util.LetterFormatter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserService {
     private final UserRepo userRepo;
-    private final InsuranceDataRepo insuranceDataRepo;
+    private final InsuranceUserDataRepo insuranceuserDataRepo;
+    private final InsuranceRepo insuranceRepo;
     private final PasswordEncoder passwordEncoder;
     private final MailSender mailSender;
     private final Auth auth;
@@ -42,14 +41,15 @@ public class UserService {
     private String host;
 
     public UserService(UserRepo userRepo,
-                       InsuranceDataRepo insuranceDataRepo,
-                       PasswordEncoder passwordEncoder,
+                       InsuranceUserDataRepo insuranceuserDataRepo,
+                       InsuranceRepo insuranceRepo, PasswordEncoder passwordEncoder,
                        MailSender mailSender,
                        Auth auth) {
         this.userRepo = userRepo;
+        this.insuranceRepo = insuranceRepo;
         this.passwordEncoder = passwordEncoder;
         this.mailSender = mailSender;
-        this.insuranceDataRepo = insuranceDataRepo;
+        this.insuranceuserDataRepo = insuranceuserDataRepo;
         this.auth = auth;
         initAdminIfDbEmpty();
     }
@@ -87,6 +87,19 @@ public class UserService {
         }
     }
 
+    public void sendMail(int userId, String text) {
+        User user = userRepo.findById(userId).orElseThrow(UserNotFoundException::new);
+        User admin = auth.getUser();
+        try {
+            mailSender.send(user.getEmail(),
+                    "Письмо от администратора",
+                    LetterFormatter.getLetterFromAdmin(admin.getSecondName(), admin.getFirstName(), admin.getPatronymic(), text),
+                    true);
+        } catch (MessagingException e) {
+            throw new SendMailException("Не удалось отправить письмо пользователю");
+        }
+    }
+
     public User findByEmail(String email) {
         return userRepo.findByEmail(email).orElse(null);
     }
@@ -106,8 +119,7 @@ public class UserService {
         user.setPatronymic(createUserDto.getPatronymic());
         user.setEmail(createUserDto.getEmail());
         user.setPassword(passwordEncoder.encode(createUserDto.getPassword()));
-//        user.setActivationCode(UUID.randomUUID().toString()); fixme
-        user.setActivationCode(null);
+        user.setActivationCode(UUID.randomUUID().toString());
         user.setRegistrationDate(LocalDateTime.now());
         user.setRoles(Set.of(Role.USER));
         user.setInsuranceData(new InsuranceUserData(user));
@@ -122,16 +134,16 @@ public class UserService {
                 Здравствуйте %s %s %s
                 Добро пожаловать в CarInsurance
                 Чтобы подтвердить почту перейдите по ссылке <a target="_blank" href="%s/registration/activate?code=%s"><u>клик</u></a>
-                """, user.getSecondName(), user.getFirstName(), user.getPatronymic(), host, user.getActivationCode());
+                Если вы не регистрировались на нашем сайте <a href="%s>%s</a>, просто игнорируйте это письмо
+                """, user.getSecondName(), user.getFirstName(), user.getPatronymic(), host, user.getActivationCode(), host, host);
 
-//        try {
-//            mailSender.send(user.getEmail(), "Активация аккаунта", message);
-//        } catch (MailSendException e) {
-//            throw new SendMailException();
-//        } catch (MessagingException e) {
-        //fixme add log
-//            throw new RuntimeException(e);
-//        }
+        try {
+            mailSender.send(user.getEmail(), "Активация аккаунта", message);
+        } catch (MailSendException e) {
+            throw new SendMailException("Не удалось отправить письмо с кодом активации аккаунта на почту. Проверьте правильность введённых данных");
+        } catch (MessagingException e) {
+            throw new SendMailException("Внутренняя ошибка сервера: не удалось отправить письмо с кодом активации аккаунта");
+        }
     }
 
     public void activateUser(String code) {
@@ -142,7 +154,7 @@ public class UserService {
 
     public void updateUserData(EditUserDataDto editInsuranceDataDto, String password) {
         User self = auth.getUser();
-        if (isAdmin(self)) {
+        if (isAdmin(self) && editInsuranceDataDto.getId() != null && editInsuranceDataDto.getId() != self.getId()) {
             updateOtherData(self, editInsuranceDataDto);
         } else {
             updateSelfData(self, editInsuranceDataDto, password);
@@ -164,7 +176,7 @@ public class UserService {
                 edit.setSecondName(editDto.getSecondName());
             if (editDto.getPatronymic() != null)
                 edit.setPatronymic(editDto.getPatronymic());
-            if (editDto.getEmail() !=    null)
+            if (editDto.getEmail() != null)
                 edit.setEmail(editDto.getEmail());
             if (editDto.getPhone() != null)
                 edit.getInsuranceData().setPhone(editDto.getPhone());
@@ -183,7 +195,7 @@ public class UserService {
                 edit.getInsuranceData().setStatus(editDto.getInsuranceDataStatus());
 
 
-            insuranceDataRepo.save(edit.getInsuranceData());
+            insuranceuserDataRepo.save(edit.getInsuranceData());
             userRepo.save(edit);
         }
     }
@@ -195,7 +207,9 @@ public class UserService {
                 self.setEmail(editDto.getEmail());
             if (editDto.getPhone() != null)
                 self.getInsuranceData().setPhone(editDto.getPhone());
-            insuranceDataRepo.save(self.getInsuranceData());
+            if (editDto.getPassword() != null)
+                self.setPassword(passwordEncoder.encode(editDto.getPassword()));
+            insuranceuserDataRepo.save(self.getInsuranceData());
             userRepo.save(self);
         }
     }
@@ -203,7 +217,7 @@ public class UserService {
     public List<User> filter(UserFilter userFilter) {
         if (userFilter.getPassportId() != null) {
             List<User> resultList = new ArrayList<>(1);
-            insuranceDataRepo.findByPassportId(userFilter.getPassportId()).ifPresent(el -> resultList.add(el.getOwner()));
+            insuranceuserDataRepo.findByPassportId(userFilter.getPassportId()).ifPresent(el -> resultList.add(el.getOwner()));
             return resultList;
         }
 
@@ -222,6 +236,7 @@ public class UserService {
         return result;
     }
 
+    @Deprecated
     public void ban(Integer userId) {
         if (userId != null) {
             User user = userRepo.findById(userId).orElseThrow(UserNotFoundException::new);
@@ -237,5 +252,11 @@ public class UserService {
 
     public User getSelfData() {
         return userRepo.findById(auth.getUser().getId()).get();
+    }
+
+    public int getInsuranceCountForUser(User user) {
+        return insuranceRepo.countInsuranceByCreator(
+                user == null ? auth.getUser().getInsuranceData() : user.getInsuranceData()
+        );
     }
 }

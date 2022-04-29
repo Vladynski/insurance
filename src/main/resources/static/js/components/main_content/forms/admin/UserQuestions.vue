@@ -24,7 +24,6 @@ export default {
   beforeMount() {
     this.$adminApi.getQuestions().then((ok) => {
       this.questions = ok.data
-      console.log(ok);
     })
   }
 }

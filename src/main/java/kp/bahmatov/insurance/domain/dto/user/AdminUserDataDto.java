@@ -9,7 +9,7 @@ public class AdminUserDataDto extends SelfUserOutDto {
     private final boolean isActive;
 
     public AdminUserDataDto(User user) {
-        super(user);
+        super(user, -1);
         this.id = user.getId();
         this.isActive = user.isEnabled();
     }

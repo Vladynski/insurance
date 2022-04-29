@@ -27,9 +27,9 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public void createUser(@Valid @RequestBody CreateUserInDto createUserDto, HttpServletResponse response) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createUser(@Valid @RequestBody CreateUserInDto createUserDto) {
         userService.addUser(createUserDto);
-        response.setStatus(HttpStatus.CREATED.value());
     }
 
     @GetMapping("/activate")
@@ -37,9 +37,8 @@ public class RegistrationController {
         userService.activateUser(code);
 
         try {
-                response.sendRedirect(host + "?message=" + URLEncoder.encode("Аккаунт активирован\uD83C\uDF8A", StandardCharsets.UTF_8) + "&type=ok");
+            response.sendRedirect(host + "?message=" + URLEncoder.encode("Аккаунт активирован\uD83C\uDF8A", StandardCharsets.UTF_8) + "&type=ok");
         } catch (IOException e) {
-            //FIXME add log
             throw new RuntimeException(e);
         }
     }

@@ -1,6 +1,9 @@
 package kp.bahmatov.insurance.domain.structure;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -23,7 +26,6 @@ public class Question {
     private LocalDateTime sendDateTime;
     @ManyToOne
     private User respondent;
-    private boolean sendEmail;
     @Column(length = 1024)
     private String textAnswer;
 

@@ -13,11 +13,24 @@ import Button from "../../../../items/Button.vue";
 
 export default {
   components: {Button, TextArea},
-  props: ['email'],
+  props: ['email', 'userId'],
   methods: {
     send() {
-      //FIXME
-      console.log(this.$refs.textArea.getText());
+      if (this.$refs.textArea.test()) {
+        this.$adminApi.sendMail(this.userId, this.$refs.textArea.getText()).then(
+            (ok) => {
+              this.$refs.textArea.showError('Письмо отправлено')
+              this.$refs.textArea.clear()
+              setTimeout(() => {
+                this.$refs.textArea.update()
+              }, 5000)
+            },
+            (err) => {
+              console.log(err.response);
+              this.$refs.textArea.showError(err.response.data.message)
+            }
+        )
+      }
     }
   }
 }

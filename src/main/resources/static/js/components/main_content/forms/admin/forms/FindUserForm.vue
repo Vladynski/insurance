@@ -63,6 +63,8 @@ export default {
       let result = false
       this.inputList.forEach(el => result = result || el.silentTest())
 
+      result = result || this.$refs.isAdmin.selected
+
       if (!result)
         this.setInfoText('Должно быть заполнено хотя бы одно поле')
 

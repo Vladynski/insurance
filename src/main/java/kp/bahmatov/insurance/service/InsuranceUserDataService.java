@@ -2,26 +2,24 @@ package kp.bahmatov.insurance.service;
 
 import kp.bahmatov.insurance.domain.dto.insurance.userdata.InsuranceUserDataDto;
 import kp.bahmatov.insurance.domain.structure.User;
+import kp.bahmatov.insurance.domain.structure.insurance.content.Content;
+import kp.bahmatov.insurance.domain.structure.insurance.content.ContentType;
 import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserData;
 import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserDataStatus;
-import kp.bahmatov.insurance.domain.structure.insurance.content.Content;
 import kp.bahmatov.insurance.exceptions.BadRequestException;
-import kp.bahmatov.insurance.repo.InsuranceDataRepo;
+import kp.bahmatov.insurance.repo.InsuranceUserDataRepo;
 import kp.bahmatov.insurance.service.interfaces.Auth;
 import org.springframework.stereotype.Service;
 
 @Service
 public class InsuranceUserDataService {
+    private final InsuranceUserDataRepo insuranceRepo;
     private final Auth auth;
-    private final InsuranceDataRepo insuranceRepo;
-    private final UserService userService;
 
     public InsuranceUserDataService(Auth auth,
-                                    InsuranceDataRepo insuranceRepo,
-                                    UserService userService) {
+                                    InsuranceUserDataRepo insuranceRepo) {
         this.auth = auth;
         this.insuranceRepo = insuranceRepo;
-        this.userService = userService;
     }
 
     public void updateInsuranceData(InsuranceUserDataDto requestInsurance) {
@@ -33,11 +31,14 @@ public class InsuranceUserDataService {
         InsuranceUserData insurance = user.getInsuranceData();
         insurance.setPhone(requestInsurance.getPhone());
         insurance.setPassportId(requestInsurance.getPassportId());
-        insurance.setStatus(InsuranceUserDataStatus.CONFIRMED); //FIXME WAIT_CONFIRMATION
+        insurance.setStatus(InsuranceUserDataStatus.WAIT_CONFIRMATION);
 
         Content content = new Content();
         content.setContent(requestInsurance.getPhoto().getContent());
-        content.setType(requestInsurance.getPhoto().getType());
+        ContentType contentType = ContentType.findByString(requestInsurance.getPhoto().getType());
+        if (contentType == null)
+            throw new BadRequestException("Неправильный формат типа контента");
+        content.setType(contentType);
 
         insurance.setPhoto(content);
 

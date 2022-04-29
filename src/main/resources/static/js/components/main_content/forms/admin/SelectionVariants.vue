@@ -49,7 +49,6 @@ export default {
     this.$adminApi.getSelectionData().then(
         (ok) => {
           this.selections = ok.data.selections
-          console.log(this.selections);
         },
         (err) => {
           this.$api.errorHandler(err, () => this.$refs.infoFrame)

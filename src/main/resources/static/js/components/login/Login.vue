@@ -1,6 +1,6 @@
 <template>
-  <Input ref="username" type="email" value="admin@admin.admin" placeholder="Email" input-class="simple-input"/>
-  <Input ref="password" placeholder="Пароль" type="password" value="admin" input-class="simple-input"/>
+  <Input ref="username" type="email" placeholder="Email" input-class="simple-input"/>
+  <Input ref="password" placeholder="Пароль" type="password" input-class="simple-input"/>
 </template>
 
 <script>
@@ -26,6 +26,7 @@ export default {
                 (ok) => {
                   this.authorized()
                   this.unblock()
+                  this.$api.initSelectionData()
                 },
                 (err) => {
                   this.unblock()

@@ -1,6 +1,6 @@
 <template>
   <div class="choose-file-content">
-    <input :id="id" type="file" :onchange="change" hidden style="position: absolute"/>
+    <input :id="id" type="file" :accept="accept" :onchange="change" hidden style="position: absolute"/>
     <label :for="id" class="choose-file-label">Choose File</label>
     <div class="choose-file-info " :class="chose?'file-chose':''">
       <div ref="fileName"  style="overflow:hidden; width: 100%; height: 100%; display: flex; align-items: center; transition-duration: 300ms" :title="filename">
@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  props: ['id', 'choose'],
+  props: ['id', 'choose', 'accept'],
   data() {
     return {
       chose: false,

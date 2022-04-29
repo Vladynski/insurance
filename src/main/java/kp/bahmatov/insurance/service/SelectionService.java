@@ -7,10 +7,12 @@ import kp.bahmatov.insurance.domain.structure.insurance.selection.SelectionVaria
 import kp.bahmatov.insurance.exceptions.BadRequestException;
 import kp.bahmatov.insurance.repo.SelectionGroupRepo;
 import kp.bahmatov.insurance.repo.SelectionVariantRepo;
+import kp.bahmatov.insurance.util.DefaultStructureJsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.Optional;
 
 @Service
 public class SelectionService {
+    private static final Logger logger = LoggerFactory.getLogger(SelectionService.class);
+
     private final String defaultSelectionJsonFilePath;
     private final SelectionGroupRepo selectionGroupRepo;
     private final SelectionVariantRepo selectionVariantRepo;
@@ -32,14 +36,12 @@ public class SelectionService {
         fillingBdIfItsEmpty();
     }
 
-    @Deprecated
-    //FIXME read and parse to util class
     private void fillingBdIfItsEmpty() {
         if (selectionGroupRepo.count() == 0) {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 if (defaultSelectionJsonFilePath != null) {
-                    SelectionGroup[] selectionGroups = objectMapper.readValue(new File(defaultSelectionJsonFilePath), SelectionGroup[].class);
+                    SelectionGroup[] selectionGroups = DefaultStructureJsonParser.parse(defaultSelectionJsonFilePath, SelectionGroup[].class);
                     List<SelectionGroup> groups = Arrays.asList(selectionGroups);
                     for (SelectionGroup group : groups) {
                         group.getVariants().forEach(var -> var.setGroup(group));
@@ -47,6 +49,7 @@ public class SelectionService {
                     selectionGroupRepo.saveAll(groups);
                 }
             } catch (IOException e) {
+                logger.error("Не удалось загрузить стандартные (стартовые) варианты выбора");
                 throw new RuntimeException(e);
             }
         }

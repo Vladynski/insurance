@@ -4,7 +4,7 @@
       <FindInsuranceForm :updateList="updateList" :setInfoText="setInfoText"/>
     </SlidingBlock>
     <div class="block-column def-block-vertical-scrolling block-items-margin user-data-list">
-      <InsuranceCard v-for="item in insuranceList" :insurance="item"/>
+      <InsuranceCard v-for="item in insuranceList" :key="item.id" :insurance="item"/>
     </div>
   </div>
 </template>
@@ -17,7 +17,6 @@ import FindInsuranceForm from "./forms/FindInsuranceForm.vue";
 import InsuranceCard from "../cards/InsuranceCard.vue";
 
 export default {
-  name: "AdminUsers",
   components: {InsuranceCard, FindInsuranceForm, AdminUserCard, SlidingBlock, Input},
   data() {
     return {
@@ -29,6 +28,9 @@ export default {
       this.$refs.findInsuranceSB.setInfoText(text)
     },
     updateList(list) {
+      if (this.insuranceList)
+        this.insuranceList.length = 0
+
       this.insuranceList = list
 
       if (this.insuranceList.length > 0)

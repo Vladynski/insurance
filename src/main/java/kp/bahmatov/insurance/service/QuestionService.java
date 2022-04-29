@@ -6,18 +6,26 @@ import kp.bahmatov.insurance.domain.structure.User;
 import kp.bahmatov.insurance.exceptions.BadRequestException;
 import kp.bahmatov.insurance.repo.QuestionRepo;
 import kp.bahmatov.insurance.service.interfaces.Auth;
+import kp.bahmatov.insurance.util.LetterFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class QuestionService {
+    private static final Logger logger = LoggerFactory.getLogger(QuestionService.class);
+
     private final QuestionRepo questionRepo;
+    private final MailSender mailSender;
     private final Auth auth;
 
-    public QuestionService(QuestionRepo questionRepo, Auth auth) {
+    public QuestionService(QuestionRepo questionRepo, MailSender mailSender, Auth auth) {
         this.questionRepo = questionRepo;
+        this.mailSender = mailSender;
         this.auth = auth;
     }
 
@@ -50,7 +58,17 @@ public class QuestionService {
         Question question = questionRepo.findById(id).orElseThrow(() -> new BadRequestException("Вопрос с таким id не найден"));
         question.setTextAnswer(answer);
         question.setRespondent(auth.getUser());
-        question.setSendEmail(false); //fixme with check of user settings
+
+        try {
+            mailSender.send(
+                    question.getOwner().getEmail(),
+                    "Ответ на вопрос",
+                    LetterFormatter.getLetterWithQuestionAnswer(question.getText(), question.getTextAnswer()));
+        } catch (MessagingException e) {
+            logger.warn("Не удалось отправить письмо с ответом на вопрос:\n{0}", e);
+            //если письмо не отправится, ответ можно будет посмотреть в разделе "Задать вопрос"
+        }
+
         questionRepo.save(question);
     }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="block-column insurance-data-form">
+  <div class="block-column insurance-data-form form-can-payment">
     <div class="block-row header">
       <div class="block-row header-content">
         <div class="header-text header-key">
@@ -24,10 +24,10 @@
           <InsuranceDataKeyValue name="Фамилия собственника">{{ ownerSecondName }}</InsuranceDataKeyValue>
           <InsuranceDataKeyValue name="Имя собственника">{{ ownerFirstName }}</InsuranceDataKeyValue>
           <InsuranceDataKeyValue name="Отчество собственника">{{ ownerPatronymic }}</InsuranceDataKeyValue>
-          <InsuranceDataKeyValue name="Статус страховки">{{ insuranceStatus }}</InsuranceDataKeyValue>
+          <InsuranceDataKeyValue name="Статус страховки">{{ computedInsuranceStatus }}</InsuranceDataKeyValue>
         </div>
         <div class="block-column insurance-data-body">
-          <InsuranceDataKeyValue name="Статус оплаты">{{ paymentStatus }}</InsuranceDataKeyValue>
+          <InsuranceDataKeyValue name="Статус оплаты">{{ computedPaymentStatus }}</InsuranceDataKeyValue>
           <InsuranceDataKeyValue name="Внесено денег">{{ paid }} BYN</InsuranceDataKeyValue>
           <InsuranceDataKeyValue name="Крайний срок оплаты">{{ paymentDeadline }}</InsuranceDataKeyValue>
           <InsuranceDataKeyValue v-if="timer" name="Осталось времени">{{ leftTime }}</InsuranceDataKeyValue>
@@ -53,6 +53,9 @@
         </div>
       </div>
     </div>
+    <div v-if="canPay && paid === 0 && paymentStatus === 'WAIT'" class="paymentBanner block-column center">
+      <Button class="btn green-btn d-btn-max-size pay-btn" :click="pay">Оплатить 💸</Button>
+    </div>
   </div>
 </template>
 
@@ -60,10 +63,11 @@
 import InsuranceDataKeyValue from "./InsuranceDataNameValue.vue";
 import {div} from '../../../../api/Util.js'
 import RowList from "../../../items/RowList.vue";
+import Button from "../../../items/Button.vue";
 
 export default {
-  components: {RowList, InsuranceDataKeyValue},
-  props: ["insurance"],
+  components: {Button, RowList, InsuranceDataKeyValue},
+  props: ['insurance', 'canPay', 'updateInsuranceStatus'],
   data() {
     return {
       registrationNumber: this.insurance.registration_number,
@@ -75,6 +79,8 @@ export default {
       price: this.insurance.payment.sum,
       paid: this.insurance.payment.paid_sum,
       endTime: this.insurance.end_time,
+      paymentStatus: this.insurance.payment.status,
+      insuranceStatus: this.insurance.status,
       timer: undefined,
       secondsLeft: undefined,
       leftTime: undefined,
@@ -89,28 +95,38 @@ export default {
       const m = sl % 60
       sl = div(sl, 60)
       this.leftTime = `${sl < 10 ? '0' + sl : sl}:${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`
+    },
+    pay() {
+      this.$banner.showPayment('Оплата страховки', this.insurance.payment.id, this.insurance.payment.sum, () => {
+        this.paid = this.price
+        this.paymentStatus = 'PAID'
+        this.insuranceStatus = 'VALID'
+        this.updateInsuranceStatus(this.insurance.id, this.insuranceStatus)
+        this.timer = undefined
+      })
     }
   },
   computed: {
-    insuranceStatus() {
-      if (this.insurance.status === 'AWAITING_PAYMENT') {
+    computedInsuranceStatus() {
+      if (this.insuranceStatus === 'AWAITING_PAYMENT') {
         return 'Ожидает оплату'
-      } else if (this.insurance.status === 'VALID') {
+      } else if (this.insuranceStatus === 'VALID') {
         return 'Действует'
-      } else if (this.insurance.status === 'PAYMENT_OVERDUE') {
+      } else if (this.insuranceStatus === 'PAYMENT_OVERDUE') {
+        this.endTime = '-'
         return 'Оплата просрочена'
-      } else if (this.insurance.status === 'END') {
+      } else if (this.insuranceStatus === 'END') {
         return 'Вышел срок'
       } else {
         return 'Неопознанный статус'
       }
     },
-    paymentStatus() {
-      if (this.insurance.payment.status === 'WAIT') {
+    computedPaymentStatus() {
+      if (this.paymentStatus === 'WAIT') {
         return 'Ожидает оплату'
-      } else if (this.insurance.payment.status === 'PAID') {
+      } else if (this.paymentStatus === 'PAID') {
         return 'Оплачено'
-      } else if (this.insurance.payment.status === 'OVERDUE') {
+      } else if (this.paymentStatus === 'OVERDUE') {
         return 'Просрочена'
       } else {
         return 'Неопознанный статус'
@@ -118,16 +134,22 @@ export default {
     }
   },
   beforeMount() {
-     this.$api.getSelectionNamesByIds(this.insurance.variants, this.variantNames)
+    this.$api.getSelectionNamesByIds(this.insurance.variants, this.variantNames)
   },
   mounted() {
     this.secondsLeft = new Date(this.insurance.payment.deadline).getTime() - new Date().getTime()
-    if (this.secondsLeft > 0) {
+    if (this.secondsLeft > 0 && this.insurance.payment.status === 'WAIT') {
       this.secondsLeft = Math.floor(this.secondsLeft / 1000)
       if (!this.timer) {
         this.timer = setInterval(() => {
           this.secondsLeft--
-          this.setTime(this.secondsLeft)
+          if (this.secondsLeft === 0) {
+            clearInterval(this.timer)
+            this.insuranceStatus = 'PAYMENT_OVERDUE'
+            this.paymentStatus = 'OVERDUE'
+            this.timer = undefined
+          } else
+            this.setTime(this.secondsLeft)
         }, 1000)
       }
     }
@@ -137,6 +159,7 @@ export default {
 
 <style scoped>
 .insurance-data-form {
+  position: relative;
   border: 5px solid #ffffff;
   height: auto;
   background: linear-gradient(#462446, #723d66, #643564, #754269);
@@ -184,5 +207,26 @@ export default {
 .header-value {
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.form-can-payment:hover > .paymentBanner {
+  max-height: 500px;
+}
+
+.paymentBanner {
+  transition-duration: 300ms;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  max-height: 0;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.pay-btn {
+  width: 75%;
 }
 </style>

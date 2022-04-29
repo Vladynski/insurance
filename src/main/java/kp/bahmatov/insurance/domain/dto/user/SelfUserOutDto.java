@@ -17,8 +17,9 @@ public class SelfUserOutDto {
     private LocalDateTime registrationDate;
     private Set<Role> roles;
     private InsuranceUserDataDto insurance;
+    private int insuranceCount;
 
-    public SelfUserOutDto(User user) {
+    public SelfUserOutDto(User user, int insuranceCount) {
         this.firstName = user.getFirstName();
         this.secondName = user.getSecondName();
         this.patronymic = user.getPatronymic();
@@ -26,5 +27,6 @@ public class SelfUserOutDto {
         this.registrationDate = user.getRegistrationDate();
         this.roles = user.getRoles();
         this.insurance = new InsuranceUserDataDto(user.getInsuranceData());
+        this.insuranceCount = insuranceCount;
     }
 }

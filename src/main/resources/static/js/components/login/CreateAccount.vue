@@ -1,11 +1,10 @@
 <template>
-  <!--FIXME-->
-  <Input value="123" ref="secondName" placeholder="Фамилия" input-class="simple-input"/>
-  <Input value="123" ref="firstName" placeholder="Имя" input-class="simple-input"/>
-  <Input value="123" ref="patronymic" placeholder="Отчество" input-class="simple-input"/>
-  <Input value="123@mail.ru" ref="email" type="email" placeholder="Email" input-class="simple-input"/>
-  <Input value="123" ref="password" type="password" placeholder="Пароль" input-class="simple-input"/>
-  <Input value="123" ref="password2" type="password" placeholder="Повторите пароль" input-class="simple-input"/>
+  <Input ref="secondName" placeholder="Фамилия" input-class="simple-input"/>
+  <Input ref="firstName" placeholder="Имя" input-class="simple-input"/>
+  <Input ref="patronymic" placeholder="Отчество" input-class="simple-input"/>
+  <Input ref="email" type="email" placeholder="Email" input-class="simple-input"/>
+  <Input ref="password" type="password" placeholder="Пароль" input-class="simple-input"/>
+  <Input ref="password2" type="password" placeholder="Повторите пароль" input-class="simple-input"/>
 </template>
 
 <script>
@@ -48,7 +47,6 @@ export default {
       }
     },
     testFields() {
-      return true //FIXME
       let ok = true
       this.fields.forEach(el => {
         if (!el.test())

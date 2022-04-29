@@ -8,6 +8,7 @@ import kp.bahmatov.insurance.service.QuestionService;
 import kp.bahmatov.insurance.service.SettingsService;
 import kp.bahmatov.insurance.service.interfaces.Auth;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,13 +35,14 @@ public class QuestionController {
         return questionService.getAllForUser().stream().map(QuestionOutDto::new).toList();
     }
 
-    //FIXME only admin
     @GetMapping("/admin")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<QuestionOutDto> getAll() {
         return questionService.getAllWithoutAnswer().stream().map(QuestionOutDto::new).toList();
     }
 
     @PutMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void addAnswer(@RequestParam("id") long id, @RequestParam("answer") String answer) {
         questionService.setAnswer(id, answer);
     }

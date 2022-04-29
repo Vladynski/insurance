@@ -55,8 +55,6 @@ export function createAdminApi(axios) {
             if (status)
                 data['status'] = status
 
-            console.log(data);
-
             return this.axios.post('/insurance/filter', data)
         },
 
@@ -148,8 +146,6 @@ export function createAdminApi(axios) {
             if (coefficient)
                 data.coefficient = coefficient.toString().replace(',', '.')
 
-            console.log(data);
-
             return this.axios.put('/selection/variant', data)
         },
 
@@ -167,6 +163,31 @@ export function createAdminApi(axios) {
 
         updateGroup(id, name) {
             return this.axios.put(`/selection/group?id=${id}&name=${name}`)
+        },
+
+        getSettings() {
+            return this.axios.get('/settings')
+        },
+
+        updateSetting(key, description, value) {
+            const data = {key: key}
+
+            if (description)
+                data['description'] = description
+            else if (value)
+                data['value'] = value
+
+            if (Object.keys(data).length > 1)
+                return this.axios.put('/settings', data)
+            else
+                return null
+        },
+
+        sendMail(userId, text) {
+            return this.axios.post('/users/sendMail', {
+                id: userId,
+                text: text
+            })
         }
     }
 }

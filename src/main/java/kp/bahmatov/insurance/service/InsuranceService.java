@@ -7,14 +7,16 @@ import kp.bahmatov.insurance.domain.structure.insurance.InsuranceStatus;
 import kp.bahmatov.insurance.domain.structure.insurance.Payment;
 import kp.bahmatov.insurance.domain.structure.insurance.selection.SelectionVariant;
 import kp.bahmatov.insurance.exceptions.BadRequestException;
-import kp.bahmatov.insurance.repo.InsuranceDataRepo;
 import kp.bahmatov.insurance.repo.InsuranceRepo;
+import kp.bahmatov.insurance.repo.InsuranceUserDataRepo;
 import kp.bahmatov.insurance.repo.UserRepo;
 import kp.bahmatov.insurance.repo.specification.SpecificationBuilder;
 import kp.bahmatov.insurance.repo.specification.StructureSpecification;
 import kp.bahmatov.insurance.repo.specification.reflection.SpecificBuilderByDto;
 import kp.bahmatov.insurance.service.interfaces.Auth;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,25 +28,26 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@EnableScheduling
 public class InsuranceService {
     private final Auth auth;
     private final InsuranceRepo insuranceRepo;
     private final SelectionService selectionService;
     private final PaymentService paymentService;
-    private final InsuranceDataRepo insuranceDataRepo;
+    private final InsuranceUserDataRepo insuranceuserDataRepo;
     private final UserRepo userRepo;
 
     public InsuranceService(Auth auth,
                             InsuranceRepo insuranceRepo,
                             SelectionService selectionService,
                             PaymentService paymentService,
-                            InsuranceDataRepo insuranceDataRepo,
+                            InsuranceUserDataRepo insuranceuserDataRepo,
                             UserRepo userRepo) {
         this.auth = auth;
         this.insuranceRepo = insuranceRepo;
         this.selectionService = selectionService;
         this.paymentService = paymentService;
-        this.insuranceDataRepo = insuranceDataRepo;
+        this.insuranceuserDataRepo = insuranceuserDataRepo;
         this.userRepo = userRepo;
     }
 
@@ -61,7 +64,7 @@ public class InsuranceService {
         insurance.setWinNumber(insuranceDto.getWinNumber());
         insurance.setRegistrationNumber(insuranceDto.getRegistrationNumber());
         insurance.setStatus(InsuranceStatus.AWAITING_PAYMENT);
-        insurance.setEndTime(LocalDateTime.now().plusMonths(6));
+        insurance.setEndTime(getInsuranceDeadline());
         insurance.setVariants(List.of(insuranceDto.getSelectionVariantsIds()));
 
         List<SelectionVariant> variants = selectionService.findByIds(List.of(insuranceDto.getSelectionVariantsIds()));
@@ -72,6 +75,22 @@ public class InsuranceService {
         insurance.setPayment(payment);
 
         insuranceRepo.save(insurance);
+    }
+
+    private LocalDateTime getInsuranceDeadline() {
+        return LocalDateTime.now()
+                .plusMonths(6)
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    private void checkInsuranceDeadline() {
+        List<Insurance> found = insuranceRepo.findAllByEndTimeBeforeAndStatus(LocalDateTime.now(), InsuranceStatus.VALID);
+        found.forEach(el -> el.setStatus(InsuranceStatus.END));
+        insuranceRepo.saveAll(found);
     }
 
     public void throwExceptionIfInsuranceAlreadyExists(InsuranceInDto insuranceDto) {
@@ -124,12 +143,12 @@ public class InsuranceService {
         }
 
         if (filterDto.getPassportId() != null) {
-            insuranceDataRepo.findByPassportId(filterDto.getPassportId())
+            insuranceuserDataRepo.findByPassportId(filterDto.getPassportId())
                     .ifPresent(insuranceData -> builder.with("creator", insuranceData.getId()));
         }
 
         if (filterDto.getPhone() != null) {
-            insuranceDataRepo.findByPhone(filterDto.getPhone())
+            insuranceuserDataRepo.findByPhone(filterDto.getPhone())
                     .ifPresent(insuranceData -> builder.with("creator", insuranceData.getId()));
         }
 

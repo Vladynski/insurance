@@ -69,8 +69,10 @@
             <div class="block-row block-row-items-margin" style="height: auto;">
               <Button :click="toSendMailSlide" class="btn green-btn d-btn-max-size" title="Отправить письмо">📧
               </Button>
-              <Button :startBlock="userdata.insurance.status === 'NONE'" class="btn green-btn d-btn-max-size"
-                      title="Посмотреть фото паспорта">📷️
+              <Button
+                  :click="showPhoto"
+                  :startBlock="userdata.insurance.status === 'NONE'" class="btn green-btn d-btn-max-size"
+                  title="Посмотреть фото паспорта">📷️
               </Button>
             </div>
             <Button :click="editUserData" class="btn green-btn d-btn-max-size">Применить изменения
@@ -83,7 +85,7 @@
              :defView="false"
              :noPadding="true">
         <div class="admin-user-card-body">
-          <SendMailForm :email="userdata.email"/>
+          <SendMailForm :email="userdata.email" :userId="userdata.id"/>
         </div>
       </Slide>
     </PageSlider>
@@ -123,6 +125,11 @@ export default {
     }
   },
   methods: {
+    showPhoto() {
+      const photo = this.userdata.insurance.photo
+      console.log(photo);
+      this.$banner.showPhoto('sssss', photo.content, photo.type)
+    },
     editUserData() {
       const data =
           this.$adminApi.editUserDataBuilder(this.userdata.id)

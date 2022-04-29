@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface InsuranceDataRepo extends JpaRepository<InsuranceUserData, Integer> {
+public interface InsuranceUserDataRepo extends JpaRepository<InsuranceUserData, Integer> {
     Optional<InsuranceUserData> findByPassportId(String passportId);
 
     Optional<InsuranceUserData> findByPhone(String phone);

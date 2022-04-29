@@ -1,5 +1,6 @@
 <template>
   <div class="base-form">
+    <InfoFrame ref="infoFrame"/>
     <div class="base-form-title def-block title-background-container insurance-list-title">
       Список оформленных страховок
     </div>
@@ -18,7 +19,7 @@
             </div>
             <div class="block-column insurance-card-container" v-if="insuranceList">
               <template v-for="(el, index) in resultList" :key="el.id">
-                <InsuranceCard :insurance="el"/>
+                <InsuranceCard :insurance="el" canPay="true" :updateInsuranceStatus="updateInsuranceStatus"/>
                 <hr v-if="index < insuranceList.length - 1" class="separator">
               </template>
             </div>
@@ -64,6 +65,9 @@ export default {
     }
   },
   methods: {
+    updateInsuranceStatus(id, status) {
+      this.insuranceList.find((el) => el.id === id).status = status
+    },
     sortListByInsuranceStatus() {
       this.resultList = this.insuranceList.sort((a, b) => {
         if (a.status === 'VALID' && b.status === 'VALID') {
@@ -90,7 +94,7 @@ export default {
           this.sortListByInsuranceStatus()
         },
         (err) => {
-          //FIXME show error
+          this.$refs.infoFrame.showError("Не удалось загрузить данные")
           this.insuranceList = undefined
         }
     )

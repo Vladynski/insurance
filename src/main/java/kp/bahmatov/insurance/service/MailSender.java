@@ -23,8 +23,8 @@ public class MailSender {
         this.mailSender = mailSender;
     }
 
-    public void send(String emailTo, String subject, String message) throws MessagingException {
-        send(emailTo, subject, message, false);
+    public boolean send(String emailTo, String subject, String message) throws MessagingException {
+        return send(emailTo, subject, message, false);
     }
 
     public boolean send(String emailTo, String subject, String message, boolean outOfTurn) throws MessagingException {

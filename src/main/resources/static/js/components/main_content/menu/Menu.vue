@@ -44,6 +44,17 @@ export default {
         unselectAction: unselectAction,
         pictureName: pictureName
       })
+    },
+    addItemByIndex(index, itemName, pictureName, selectAction, unselectAction) {
+      if (index < 0)
+        index = this.menuItems.length + index
+      this.menuItems.splice(index, 0, {
+        itemName: itemName,
+        selected: false,
+        selectAction: selectAction,
+        unselectAction: unselectAction,
+        pictureName: pictureName
+      })
     }
   }
 }

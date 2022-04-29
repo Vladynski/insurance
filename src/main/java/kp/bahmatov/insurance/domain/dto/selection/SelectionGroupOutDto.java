@@ -6,15 +6,14 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-//fixme check in
-public class SelectionGroupDto {
+public class SelectionGroupOutDto {
     private int id;
     private String name;
-    private List<? extends SelectionVariantDto> variants;
+    private List<? extends SelectionVariantOutDto> variants;
 
-    public SelectionGroupDto(SelectionGroup selectionGroup) {
+    public SelectionGroupOutDto(SelectionGroup selectionGroup) {
         this.id = selectionGroup.getId();
         this.name = selectionGroup.getName();
-        this.variants = selectionGroup.getVariants().stream().map(el -> new SelectionVariantDto(selectionGroup.getId(), el)).toList();
+        this.variants = selectionGroup.getVariants().stream().map(el -> new SelectionVariantOutDto(selectionGroup.getId(), el)).toList();
     }
 }

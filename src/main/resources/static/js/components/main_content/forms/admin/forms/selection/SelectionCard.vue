@@ -49,7 +49,6 @@ export default {
                 (ok) => {
                   this.updateList()
                 }, (err) => {
-                  //FIXME
                   console.log(err.response);
                 }
             )
@@ -100,7 +99,7 @@ export default {
                 this.id = ok.data
                 this.$refs.name.updateStartValue()
               }, (err) => {
-                console.log(err.response) //fixme
+                console.log(err.response)
               }
           )
         }

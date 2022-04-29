@@ -49,7 +49,7 @@ export default {
       )
       data.push(['Срок', 'Полгода'])
       if (this.createInsuranceData.metadata.resultSum)
-        data.push(['Итоговая сумма', this.createInsuranceData.metadata.resultSum + ' BYN'])
+        data.push(['Итоговая стоимость ', this.createInsuranceData.metadata.resultSum + ' BYN'])
       return data
     }
   },
