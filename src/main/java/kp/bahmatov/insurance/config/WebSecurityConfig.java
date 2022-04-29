@@ -29,10 +29,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .antMatcher("/**").authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/*", "/favicon.ico", "/registration/activate").permitAll()
+                .antMatchers(HttpMethod.GET, "/*", "/js/*", "/favicon.ico", "/registration/activate").permitAll()
                 .antMatchers(HttpMethod.POST, "/registration").permitAll()
                 .anyRequest().authenticated()
-//                .and().logout().logoutSuccessUrl("/logout").permitAll()
                 .and().csrf().disable();
         http.httpBasic().authenticationEntryPoint(customAuthenticationEntryPoint);
     }

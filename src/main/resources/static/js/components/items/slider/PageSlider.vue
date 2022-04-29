@@ -69,14 +69,14 @@ export default {
       this.nextSlide()
     },
     nextSlide() {
-      if (this.currentSlide >= 0 && this.slides[this.currentSlide].nextAction)
-        this.slides[this.currentSlide].nextAction()
-      else if (this.canNext())
+      // if (this.currentSlide >= 0 && this.slides[this.currentSlide].nextAction)
+      //   this.slides[this.currentSlide].nextAction()
+      if (this.canNext())
         this.showSlide(this.currentSlide + 1)
     },
     previewSlide() {
-      if (this.currentSlide >= 0 && this.slides[this.currentSlide].previewAction)
-        this.slides[this.currentSlide].previewAction()
+      // if (this.currentSlide >= 0 && this.slides[this.currentSlide].previewAction)
+      //   this.slides[this.currentSlide].previewAction()
       if (this.canPreview())
         this.showSlide(this.currentSlide - 1)
     },

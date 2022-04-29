@@ -63,13 +63,12 @@ public class UserService {
         return new String(Base64.getDecoder().decode(password));
     }
 
-    @Deprecated
     private void initAdminIfDbEmpty() {
         if (userRepo.count() == 0) {
             User user = new User();
             InsuranceUserData insurance = new InsuranceUserData(user);
-            insurance.setPassportId("1234");
-            insurance.setPhone("1234");
+            insurance.setPassportId("1234567B890BB1");
+            insurance.setPhone("375000000000");
             Content photo = new Content();
             photo.setType(ContentType.IMAGE_PNG);
             photo.setContent(new byte[0]);
@@ -77,7 +76,7 @@ public class UserService {
             insurance.setStatus(InsuranceUserDataStatus.CONFIRMED);
             user.setInsuranceData(insurance);
             user.setRoles(Set.of(Role.USER, Role.ADMIN));
-            user.setEmail("admin@admin.ru");
+            user.setEmail("admin@admin.admin");
             user.setFirstName("admin");
             user.setSecondName("admin");
             user.setPatronymic("admin");
@@ -227,10 +226,27 @@ public class UserService {
 
         Specification<User> specification = builder.build();
 
-        List<User> result = userRepo.findAll(specification);
+        List<User> result;
+
+        if (specification == null)
+            result = Collections.emptyList();
+        else
+            result = userRepo.findAll(specification);
 
         if (userFilter.getAdmin() != null && userFilter.getAdmin()) {
-            result = result.stream().filter(this::isAdmin).toList();
+            if (result.isEmpty()) {
+                result = userRepo.findAllByRolesIn(Set.of(Role.ADMIN));
+            } else {
+                result = result.stream().filter(this::isAdmin).toList();
+            }
+        }
+
+        if (userFilter.getInsuranceDetailsNotConfirmed() != null && userFilter.getInsuranceDetailsNotConfirmed()) {
+            if (result.isEmpty()) {
+                result = insuranceuserDataRepo.findAllByStatus(InsuranceUserDataStatus.WAIT_CONFIRMATION).stream().map(InsuranceUserData::getOwner).toList();
+            } else {
+                result = result.stream().filter(el -> el.getInsuranceData().getStatus() == InsuranceUserDataStatus.WAIT_CONFIRMATION).toList();
+            }
         }
 
         return result;
@@ -251,7 +267,7 @@ public class UserService {
     }
 
     public User getSelfData() {
-        return userRepo.findById(auth.getUser().getId()).get();
+        return userRepo.findById(auth.getUser().getId()).orElseThrow(UserNotFoundException::new);
     }
 
     public int getInsuranceCountForUser(User user) {

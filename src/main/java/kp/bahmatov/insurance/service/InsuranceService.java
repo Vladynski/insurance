@@ -155,6 +155,9 @@ public class InsuranceService {
 
         Specification<Insurance> specification = builder.build();
 
+        if (specification == null)
+            return Collections.emptyList();
+
         return insuranceRepo.findAll(specification);
     }
 }

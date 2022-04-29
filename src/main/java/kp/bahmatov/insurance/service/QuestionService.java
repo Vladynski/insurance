@@ -4,6 +4,7 @@ import kp.bahmatov.insurance.domain.dto.QuestionInDto;
 import kp.bahmatov.insurance.domain.structure.Question;
 import kp.bahmatov.insurance.domain.structure.User;
 import kp.bahmatov.insurance.exceptions.BadRequestException;
+import kp.bahmatov.insurance.exceptions.NotFoundException;
 import kp.bahmatov.insurance.repo.QuestionRepo;
 import kp.bahmatov.insurance.service.interfaces.Auth;
 import kp.bahmatov.insurance.util.LetterFormatter;
@@ -55,7 +56,7 @@ public class QuestionService {
         if (id < 1)
             throw new BadRequestException("Id не может быть меньше единицы");
 
-        Question question = questionRepo.findById(id).orElseThrow(() -> new BadRequestException("Вопрос с таким id не найден"));
+        Question question = questionRepo.findById(id).orElseThrow(() -> new NotFoundException("Вопрос с таким id не найден"));
         question.setTextAnswer(answer);
         question.setRespondent(auth.getUser());
 

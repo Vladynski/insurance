@@ -7,14 +7,18 @@
     </div>
     <div class="block-row block-row-items-margin">
       <Input ref="email" inputClass="d-input-size" placeholder="По Email'у"/>
-      <Input ref="phone" inputClass="d-input-size" placeholder="По номеру телефона"/>
+      <Input ref="phone" inputClass="d-input-size" :keydown="phoneKeydown" placeholder="По номеру телефона"/>
     </div>
     <div class="block-row block-row-items-margin">
-      <Input ref="userId" inputClass="d-input-size" placeholder="По id"/>
+      <Input ref="userId" inputClass="d-input-size" :keydown="numbersKeydown" placeholder="По id"/>
       <Input ref="passportId" inputClass="d-input-size" placeholder="По ID паспорта (полному)"/>
-      <Input ref="insuranceDataId" inputClass="d-input-size" placeholder="По id страховых данных"/>
+      <Input ref="insuranceDataId" inputClass="d-input-size" :keydown="numbersKeydown"
+             placeholder="По id страховых данных"/>
     </div>
-    <Checkbox ref="isAdmin">Только администраторы</Checkbox>
+    <div class="block-row block-row-items-margin">
+      <Checkbox ref="isAdmin">Только администраторы</Checkbox>
+      <Checkbox ref="isNotConfirmedUserInsuranceData">Неподтверждённые страховые данные</Checkbox>
+    </div>
     <div class="block-row block-row-items-margin">
       <Button :click="find" class="btn green-btn d-btn-max-size">Найти</Button>
       <Button :click="clear" class="btn blue-btn d-btn-max-size">Очистить</Button>
@@ -26,12 +30,15 @@
 import Input from "../../../../items/Input.vue";
 import Checkbox from "../../../../items/Checkbox.vue";
 import Button from "../../../../items/Button.vue";
+import {checkNumbersInputUpdate, checkPhoneInputUpdate} from "../../../../../api/Util.js";
 
 export default {
   components: {Button, Checkbox, Input},
   props: ['updateList', 'setInfoText'],
   data() {
     return {
+      numbersKeydown: checkNumbersInputUpdate,
+      phoneKeydown: checkPhoneInputUpdate,
       inputList: undefined
     }
   },
@@ -50,7 +57,8 @@ export default {
             this.$refs.email.getTextU(),
             this.$refs.passportId.getTextU(),
             this.$refs.insuranceDataId.getTextU(),
-            this.$refs.isAdmin.selected
+            this.$refs.isAdmin.selected,
+            this.$refs.isNotConfirmedUserInsuranceData.selected
         ).then(
             (ok) => {
               this.updateList(ok.data);
@@ -63,7 +71,7 @@ export default {
       let result = false
       this.inputList.forEach(el => result = result || el.silentTest())
 
-      result = result || this.$refs.isAdmin.selected
+      result = result || this.$refs.isAdmin.selected || this.$refs.isNotConfirmedUserInsuranceData.selected
 
       if (!result)
         this.setInfoText('Должно быть заполнено хотя бы одно поле')

@@ -5,7 +5,7 @@
       {{ selected ? getTitle(selected) : title }}
     </div>
     <div v-if="showElements" ref="selectVariants" class="select-items">
-      <div v-for="item in items" @click="selectItem(item)">{{ getTitle(item) }}</div>
+      <div v-for="item in items" :key="getTitle(item)" @click="selectItem(item)">{{ getTitle(item) }}</div>
     </div>
   </div>
 </template>

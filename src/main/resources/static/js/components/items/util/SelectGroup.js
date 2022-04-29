@@ -1,24 +1,26 @@
 export function createGroup() {
     return {
+        selectItemsMap: {},
         selectItems: [],
         limit: 0,
         defaultListener: undefined,
         closeAll() {
-            this.selectItems.forEach(el => el.hideList())
+            Object.values(this.selectItemsMap).forEach(el => el.hideList())
         },
         items() {
-            return this.selectItems
+            return Object.values(this.selectItemsMap)
         },
         getSelected() {
-            return this.selectItems.map(el => el.getSelected())
+            return Object.values(this.selectItemsMap).map(el => el.getSelected())
         },
         setLimit(limit) {
             this.limit = limit
         },
         allSelected(highlight) {
             let result = true;
-            for (let index = 0; index < this.selectItems.length; index++) {
-                let el = this.selectItems[index]
+            const values = Object.values(this.selectItemsMap)
+            for (let index = 0; index < values.length; index++) {
+                let el = values[index]
                 if (!el.isSelected()) {
                     if (highlight) {
                         el.shake()
@@ -29,11 +31,9 @@ export function createGroup() {
             }
             return result;
         },
-        add(selectItem) {
+        add(selectItem, key) {
             if (selectItem) {
-                if (this.selectItems.length === this.limit)
-                    this.selectItems.shift()
-                this.selectItems.push(selectItem)
+                this.selectItemsMap[key] = selectItem
                 if (this.defaultListener)
                     selectItem.setSelectListener(this.defaultListener)
             }

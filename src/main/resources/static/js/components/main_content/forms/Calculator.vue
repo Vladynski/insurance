@@ -12,7 +12,7 @@
                :defView="false">
           <CalculatorSlide ref="calculatorSlide"
                            :outUserdata="outUserdata"
-                           :nextSlide="()=> this.getPageSlider().nextSlide()"
+                           :nextSlide="nextSlide"
                            :createInsuranceData="createInsuranceData"></CalculatorSlide>
         </Slide>
         <Slide ref="createInsuranceSlide"
@@ -21,7 +21,7 @@
           <CreateInsuranceSlide
               :outUserdata="outUserdata"
               :createInsuranceData="createInsuranceData"
-              :nextSlide="()=> this.getPageSlider().nextSlide()"></CreateInsuranceSlide>
+              :nextSlide="nextSlide"></CreateInsuranceSlide>
         </Slide>
         <Slide ref="checkInsuranceDataSlide"
                title="Проверка данных"
@@ -29,10 +29,10 @@
                :showByIf="true">
           <CheckInsuranceDataSlide
               :createInsuranceData="createInsuranceData"
-              :nextSlide="()=> this.getPageSlider().nextSlide()"></CheckInsuranceDataSlide>
+              :nextSlide="nextSlide"></CheckInsuranceDataSlide>
         </Slide>
         <Slide ref="createInsuranceFinishSlide"
-               title="Финаль этап оформления"
+               title="Финальный этап оформления"
                :pageSliderGetter="getPageSlider"
                :showByIf="true">
           <CreateInsuranceFinishSlide
@@ -67,6 +67,9 @@ export default {
   methods: {
     getPageSlider() {
       return this.$refs.pageSlider
+    },
+    nextSlide(){
+      this.getPageSlider().nextSlide()
     }
   },
   mounted() {

@@ -1,7 +1,6 @@
 package kp.bahmatov.insurance.repo.specification;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -9,6 +8,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+@SuppressWarnings("NullableProblems")
 @AllArgsConstructor
 public class StructureSpecification<T> implements Specification<T> {
     private SearchCriteria criteria;

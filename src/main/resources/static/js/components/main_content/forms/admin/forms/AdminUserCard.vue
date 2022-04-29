@@ -127,8 +127,7 @@ export default {
   methods: {
     showPhoto() {
       const photo = this.userdata.insurance.photo
-      console.log(photo);
-      this.$banner.showPhoto('sssss', photo.content, photo.type)
+      this.$banner.showPhoto(this.userdata.id, photo.content, photo.type)
     },
     editUserData() {
       const data =

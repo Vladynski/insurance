@@ -6,6 +6,7 @@ import kp.bahmatov.insurance.domain.structure.insurance.Payment;
 import kp.bahmatov.insurance.domain.structure.insurance.PaymentStatus;
 import kp.bahmatov.insurance.domain.structure.insurance.userdata.InsuranceUserData;
 import kp.bahmatov.insurance.exceptions.BadRequestException;
+import kp.bahmatov.insurance.exceptions.NotFoundException;
 import kp.bahmatov.insurance.repo.InsuranceRepo;
 import kp.bahmatov.insurance.repo.PaymentRepo;
 import kp.bahmatov.insurance.service.interfaces.Auth;
@@ -54,12 +55,12 @@ public class PaymentService {
 
     public void pay(String paymentId) {
         Payment payment = paymentRepo.findById(paymentId).orElseThrow(
-                () -> new BadRequestException("Платёж с таким id не найден")
+                () -> new NotFoundException("Платёж с таким id не найден")
         );
 
         InsuranceUserData creator = payment.getInsurance().getCreator();
         if (!creator.equals(auth.getUser().getInsuranceData())) {
-            throw new BadRequestException("Платёж с таким id не найден");
+            throw new NotFoundException("Платёж с таким id не найден");
         } else if (payment.getStatus() == PaymentStatus.OVERDUE) {
             throw new BadRequestException("Платёж просрочен");
         } else if (payment.getStatus() == PaymentStatus.PAID) {

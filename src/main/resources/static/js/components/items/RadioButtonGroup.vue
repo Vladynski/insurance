@@ -21,7 +21,7 @@
 import {randomId} from "../../api/Util.js";
 
 export default {
-  /*items should have a name and an select params*/
+  /*items should have a name and a select params*/
   props: ['items', 'title', 'selectIndex', 'small', 'changeListener', 'editable'],
   data() {
     return {

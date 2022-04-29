@@ -1,6 +1,9 @@
 package kp.bahmatov.insurance.domain.structure;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -15,7 +18,7 @@ public class Faq {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
-    @Column(length = 255)
+    @Column
     private String question;
     @Column(length = 1024)
     private String answer;

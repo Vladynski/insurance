@@ -14,4 +14,6 @@ public class UserFilter {
     private Integer insuranceData;
     @FilterIgnore
     private Boolean admin;
+    @FilterIgnore
+    private Boolean insuranceDetailsNotConfirmed;
 }

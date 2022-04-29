@@ -1,6 +1,5 @@
 package kp.bahmatov.insurance.config.dataformat;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -12,7 +11,6 @@ import kp.bahmatov.insurance.util.StringDateUtil;
 import javax.persistence.AttributeConverter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +33,7 @@ public class DateConverter {
         }
 
         @Override
-        public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+        public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
             return StringDateUtil.parse(jsonParser.readValueAs(String.class));
         }
     }

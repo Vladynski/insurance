@@ -1,9 +1,7 @@
 package kp.bahmatov.insurance.config.dataformat;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -30,7 +28,7 @@ public class ContentTypeConverter {
         }
 
         @Override
-        public ContentType deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+        public ContentType deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
             return ContentType.findByString(jsonParser.readValueAs(String.class));
         }
     }

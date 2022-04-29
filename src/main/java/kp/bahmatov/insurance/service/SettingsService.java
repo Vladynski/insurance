@@ -4,6 +4,7 @@ import kp.bahmatov.insurance.domain.dto.SettingsDto;
 import kp.bahmatov.insurance.domain.util.setting.Setting;
 import kp.bahmatov.insurance.domain.util.setting.SettingStructure;
 import kp.bahmatov.insurance.exceptions.BadRequestException;
+import kp.bahmatov.insurance.exceptions.NotFoundException;
 import kp.bahmatov.insurance.exceptions.validation.CustomValidationException;
 import kp.bahmatov.insurance.repo.SettingsRepo;
 import kp.bahmatov.insurance.service.settingspredicates.*;
@@ -84,7 +85,7 @@ public class SettingsService {
     public static void updateSetting(SettingsDto settingsDto) {
         SettingWrapper editWrapper = SettingWrapper.settings.get(settingsDto.getKey());
         if (editWrapper == null)
-            throw new BadRequestException("Настройка с таким ключом не найдена");
+            throw new NotFoundException("Настройка с таким ключом не найдена");
 
         if (settingsDto.getDescription() != null) {
             if (!settingsDto.getDescription().isBlank()) {

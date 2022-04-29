@@ -8,8 +8,9 @@
       <div class="menu-title" style="font-size: 22px; left: 0">{{ username }}</div>
       <MenuButton v-for="item in menuItems"
                   :customClick="item.selectAction" :menu-item="item"
-                  :pre-select="preSelect"
-                  :pictureName="item.pictureName"/>
+                  :preSelect="preSelect"
+                  :pictureName="item.pictureName"
+                  :key="item.name"/>
     </div>
   </div>
 </template>

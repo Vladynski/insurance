@@ -5,6 +5,7 @@ import kp.bahmatov.insurance.domain.dto.selection.update.SelectionVariantUpdateD
 import kp.bahmatov.insurance.domain.structure.insurance.selection.SelectionGroup;
 import kp.bahmatov.insurance.domain.structure.insurance.selection.SelectionVariant;
 import kp.bahmatov.insurance.exceptions.BadRequestException;
+import kp.bahmatov.insurance.exceptions.NotFoundException;
 import kp.bahmatov.insurance.repo.SelectionGroupRepo;
 import kp.bahmatov.insurance.repo.SelectionVariantRepo;
 import kp.bahmatov.insurance.util.DefaultStructureJsonParser;
@@ -67,7 +68,7 @@ public class SelectionService {
     }
 
     public List<SelectionVariant> findByIds(Iterable<Long> ids) {
-        return (List<SelectionVariant>) selectionVariantRepo.findAllById(ids);
+        return selectionVariantRepo.findAllById(ids);
     }
 
     public long getGroupCount() {
@@ -160,7 +161,7 @@ public class SelectionService {
 
         SelectionGroup group;
         if (id != 0)
-            group = selectionGroupRepo.findById(id).orElseThrow(() -> new BadRequestException("Группа с таким id не найдена"));
+            group = selectionGroupRepo.findById(id).orElseThrow(() -> new NotFoundException("Группа с таким id не найдена"));
         else
             group = new SelectionGroup();
 
@@ -170,7 +171,7 @@ public class SelectionService {
 
     public SelectionGroup findGroupById(int id) {
         return selectionGroupRepo.findById(id)
-                .orElseThrow(() -> new BadRequestException("Группы с таким id не существует"));
+                .orElseThrow(() -> new NotFoundException("Группы с таким id не существует"));
     }
 
 
@@ -189,7 +190,6 @@ public class SelectionService {
         SelectionGroup group = findGroupById(groupId);
         group.getVariants().forEach(var -> var.setActive(false));
         group.setActive(false);
-//        selectionVariantRepo.saveAll(group.getVariants());
         selectionGroupRepo.save(group);
     }
 

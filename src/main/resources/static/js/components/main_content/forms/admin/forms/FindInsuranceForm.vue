@@ -37,7 +37,7 @@ import Input from "../../../../items/Input.vue";
 import Checkbox from "../../../../items/Checkbox.vue";
 import Button from "../../../../items/Button.vue";
 import RadioButtonGroup from "../../../../items/RadioButtonGroup.vue";
-import {checkNumbersInputUpdate, checkPhoneInputUpdate} from "../../../../../api/Util";
+import {checkNumbersInputUpdate, checkPhoneInputUpdate} from "../../../../../api/Util.js";
 
 export default {
   components: {RadioButtonGroup, Button, Checkbox, Input},

@@ -10,14 +10,14 @@ import java.util.Set;
 
 @Getter
 public class SelfUserOutDto {
-    private String firstName;
-    private String secondName;
-    private String patronymic;
-    private String email;
-    private LocalDateTime registrationDate;
-    private Set<Role> roles;
-    private InsuranceUserDataDto insurance;
-    private int insuranceCount;
+    private final String firstName;
+    private final String secondName;
+    private final String patronymic;
+    private final String email;
+    private final LocalDateTime registrationDate;
+    private final Set<Role> roles;
+    private final InsuranceUserDataDto insurance;
+    private final int insuranceCount;
 
     public SelfUserOutDto(User user, int insuranceCount) {
         this.firstName = user.getFirstName();

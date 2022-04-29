@@ -2,7 +2,7 @@ package kp.bahmatov.insurance.service;
 
 import kp.bahmatov.insurance.domain.dto.FaqDto;
 import kp.bahmatov.insurance.domain.structure.Faq;
-import kp.bahmatov.insurance.exceptions.BadRequestException;
+import kp.bahmatov.insurance.exceptions.NotFoundException;
 import kp.bahmatov.insurance.repo.FaqRepo;
 import kp.bahmatov.insurance.service.interfaces.Auth;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class FaqService {
     }
 
     public void delete(int id) {
-        Faq faq = faqRepo.findById(id).orElseThrow(() -> new BadRequestException("Вопрос с таким id не найден"));
+        Faq faq = faqRepo.findById(id).orElseThrow(() -> new NotFoundException("Вопрос с таким id не найден"));
         faqRepo.delete(faq);
     }
 }

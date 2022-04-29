@@ -2,7 +2,8 @@
   <div class="block-column" style="height: auto; width: 75%;">
     <div class="block-column select-items-margin" style="height: auto">
       <InfoFrame ref="baseSumInfoFrame"/>
-      <Select :ref="(el) => group.add(el)" v-for="(item, index) in selectionData" :title="item.name"
+      <Select :ref="(el) => group.add(el, item.name)" v-for="(item, index) in selectionData" :title="item.name"
+              :key="item.id"
               :items="item.variants" :getTitle="(el) => el.name" :group="group"
               :defSelected="getAlreadySelectedForIndex(index)"></Select>
     </div>

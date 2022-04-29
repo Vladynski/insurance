@@ -4,7 +4,7 @@ export function createAdminApi(axios) {
     return {
         axios: axios,
 
-        userFilter(id, firstName, secondName, patronymic, email, passportId, insuranceDataId, admin) {
+        userFilter(id, firstName, secondName, patronymic, email, passportId, insuranceDataId, admin, insuranceDataIsNotConfirmed) {
             let data = {}
 
             if (firstName)
@@ -23,6 +23,8 @@ export function createAdminApi(axios) {
                 data['admin'] = admin
             if (passportId)
                 data['passport_id'] = passportId
+            if (insuranceDataIsNotConfirmed)
+                data['insurance_details_not_confirmed'] = insuranceDataIsNotConfirmed
 
             return this.axios.post('/users/filter', data)
         },
